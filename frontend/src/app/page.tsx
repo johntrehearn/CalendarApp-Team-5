@@ -1,7 +1,7 @@
 export default function Home() {
   return (
     <main>
-      <button className="btn btn-primary">Click Me!</button>
+      <h1>Personalized Online Advent Calendars</h1>
     </main>
   );
 }
