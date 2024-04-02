@@ -1,13 +1,18 @@
 'use client';
 
 import React from 'react';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 type Props = {};
 
 const RegisterPage = (props: Props) => {
+  const { login } = useAuthContext();
+
+  // !!! handleSubmit function is for testing purposes only!
+  // For now it's not real authentication, just a mock function.
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log('submit');
+    login();
   };
 
   return (
