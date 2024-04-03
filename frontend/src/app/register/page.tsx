@@ -2,17 +2,20 @@
 
 import React from 'react';
 import { useAuthContext } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 type Props = {};
 
 const RegisterPage = (props: Props) => {
   const { login } = useAuthContext();
+  const router = useRouter();
 
   // !!! handleSubmit function is for testing purposes only!
   // For now it's not real authentication, just a mock function.
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     login();
+    router.replace('/calendars');
   };
 
   return (
