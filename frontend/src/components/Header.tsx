@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 type Props = {};
 
@@ -10,13 +10,12 @@ const MenuItems = () => {
   // !!! After authentication is ready, clean up the mock code below:
   // 1. logOut will be handled differently (in connection with the backend)
   // 2. Delete the onClick from the Log In and Sign Up links! logIn will be handled on the /register and /login pages
-  // Login status will be stored in a global state to keep track easier.
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const logIn = () => {
-    setIsLoggedIn(true);
-  };
-  const logOut = () => {
-    setIsLoggedIn(false);
+
+  const { isLoggedIn, logout } = useAuthContext();
+
+  // Call the logout function when the logout button is clicked
+  const handleLogout = () => {
+    logout();
   };
 
   if (isLoggedIn) {
@@ -32,7 +31,7 @@ const MenuItems = () => {
           </Link>
         </li>
         <li>
-          <button onClick={logOut} className="btn btn-sm btn-outline btn-warning">
+          <button onClick={handleLogout} className="btn btn-sm btn-outline btn-warning">
             Log Out
           </button>
         </li>
@@ -43,12 +42,12 @@ const MenuItems = () => {
     return (
       <>
         <li>
-          <Link onClick={logIn} href="/register" className="btn btn-sm btn-warning">
+          <Link href="/register" className="btn btn-sm btn-warning">
             Sign Up
           </Link>
         </li>
         <li>
-          <Link onClick={logIn} href="/login" className="btn btn-sm btn-outline btn-warning">
+          <Link href="/login" className="btn btn-sm btn-outline btn-warning">
             Log In
           </Link>
         </li>
