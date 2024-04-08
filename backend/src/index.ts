@@ -6,13 +6,14 @@ import compression from "compression";
 import cors from "cors";
 import morgan from "morgan";
 import logger from "../src/utils/logger";
-import { startMetricsServer } from "../src/utils/metrics";
-
-require("dotenv").config();
-
-const MONGO_URL = process.env.MONGO_URL;
+import getDatabase from "../src/config/database";
+import authRoutes from "../src/routes/authRoutes";
 
 const app = express(); // Create an Express application
+
+// Load environment variables
+import { config } from "dotenv";
+config();
 
 app.use(cors()); // Enable All CORS Requests
 app.use(compression()); // Compress all routes and responses
@@ -20,8 +21,12 @@ app.use(cookieParser()); // Parse Cookie header and populate req.cookies with an
 app.use(bodyParser.json()); // Parse incoming request bodies in a middleware before your handlers, available under the req.body property
 app.use(morgan(":method :url :status :response-time ms")); // Logging HTTP requests to the console
 
-app.use("/calendar", calendarRouter);
+//app.use("/calendar", calendarRouter);
 
+// Use authRoutes
+app.use("/auth", authRoutes);
+
+// Default route for the API
 app.get("/", (req, res) => {
   res.send("Calendar API is running 🚀");
 });
@@ -31,8 +36,8 @@ const server = http.createServer(app); // Create an HTTP server
 server.listen(8080, () => {
   // Start the server on port 8080
   console.log("Server is running on port http://localhost:8080/");
-  logger.info(`Server listening on port 8080 🚀`);
+  // logger.info(`Server listening on port 8080 🚀`);
 });
 
-connectToDatabase(FIREBASE_URL); // Connect to MongoDB
-startMetricsServer(); // Start the metrics server on port 9100
+// Connect to Firebase
+getDatabase();

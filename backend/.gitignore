@@ -3,3 +3,6 @@ node_modules/
 dist/
 
 logfile.log
+
+serviceAccountKey.json
+
