@@ -14,7 +14,7 @@ const PageNotFound: React.FC<Props> = (): ReactElement => {
               </h2>
               <p className="w-80">
                 Looks like our webpage took a detour through Santa's workshop
-                and got lost in the tinsel.
+                and got lost in the tinsel. 😅
               </p>
               <div className="card-actions justify-end">
                 <p>
@@ -22,14 +22,14 @@ const PageNotFound: React.FC<Props> = (): ReactElement => {
                     <button className="btn bg-[#EFD7BB]">Go To Home</button>
                   </Link>
                 </p>
-                <figure className="my-4 mx-4">
-                  {/*  <Image
+                {/*   <figure className="my-4 mx-4">
+                  <Image
                     src="/image.jpg"
                     alt="Image"
                     width={400}
                     height={400}
-                  /> */}
-                </figure>
+                  />
+                </figure> */}
               </div>
             </div>
           </div>
