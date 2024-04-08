@@ -1,7 +1,4 @@
-import React from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { ReactElement } from "react";
 
 interface Props {}
 
