@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  /* COLOURS */
+  /* Dark blue */
+  --clr-base: #131625;
+  /* Warm yellow */
+  --clr-accent: #efd7bb;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--clr-base);
+}
