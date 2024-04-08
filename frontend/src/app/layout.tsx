@@ -4,6 +4,8 @@ import './globals.css';
 import Header from '@/components/Header';
 import { AuthProvider } from '@/contexts/AuthContext';
 
+
+
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
