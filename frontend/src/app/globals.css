@@ -21,7 +21,16 @@ body {
   background: var(--clr-base);
 }
 
-.title {
-  @apply text-5xl;
+/* Colour and background colour utility classes */
+.clr-base {
+  color: var(--clr-base);
+}
+.bg-base {
+  background-color: var(--clr-base);
+}
+.clr-accent {
   color: var(--clr-accent);
+}
+.bg-accent {
+  background-color: var(--clr-accent);
 }
