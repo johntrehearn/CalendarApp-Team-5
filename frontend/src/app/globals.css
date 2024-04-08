@@ -20,3 +20,8 @@ body {
   min-height: 100vh;
   background: var(--clr-base);
 }
+
+.title {
+  @apply text-5xl;
+  color: var(--clr-accent);
+}
