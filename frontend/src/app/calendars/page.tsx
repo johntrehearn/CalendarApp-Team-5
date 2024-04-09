@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthContext } from '@/contexts/AuthContext';
+import CalendarCard from '../../components/CalendarCard'
 
 type Props = {};
 
@@ -23,7 +24,13 @@ const CalendarsPage = (props: Props) => {
   }
 
   // Render the content of page if the user is logged in
-  return <div>CalendarsPage goes here</div>;
+  return (
+    <>
+      <div>CalendarsPage goes here</div>
+      <CalendarCard />
+    </>
+  )
+
 };
 
 export default CalendarsPage;
