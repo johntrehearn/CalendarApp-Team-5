@@ -1,10 +1,15 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Lato, Courgette } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/Header';
 import { AuthProvider } from '@/contexts/AuthContext';
 
-const inter = Inter({ subsets: ['latin'] });
+// Font setup
+// Lato is the default font
+const lato = Lato({ weight: '400', subsets: ['latin'] });
+// fontTitle uses the Courgette font, and it can be used in different components as an import
+const courgette = Courgette({ weight: '400', subsets: ['latin'] });
+export const fontTitle = courgette.className;
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -18,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={lato.className}>
         <AuthProvider>
           <Header />
           {children}
