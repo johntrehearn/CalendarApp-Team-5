@@ -7,10 +7,10 @@ function PaymentSuccessful() {
             <h2 className="card-title">Payment Outcome</h2>
           </center>
           <figure>
-            <img
+            {/* <img
               src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
               alt="car!"
-            />
+            /> */}
           </figure>
           <div className="card-body">
             <div role="alert" className="alert alert-success">
