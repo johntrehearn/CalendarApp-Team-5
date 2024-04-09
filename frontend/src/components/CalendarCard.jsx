@@ -10,14 +10,14 @@ const CalendarCard = () => {
     return (
 
 
-        <div className="card w-96 bg-base-100 shadow-xl" style={{ background: "lightgrey" }}>
-            <figure className="px-10 pt-10">
-                <Image src="http://source.unsplash.com/a-close-up-of-a-very-large-star-in-the-sky-HvYO12QeS5g?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash" alt="A close-up of a very large star in the sky" width={320} height={220} className="rounded-xl" />
-            </figure>
+        <div className="card w-80 bg-[#e2e8f0] shadow-xl px-6 py-4">
+            <figure>
+                <Image src="http://source.unsplash.com/a-close-up-of-a-very-large-star-in-the-sky-HvYO12QeS5g?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash" alt="Placeholder Calendar Picture" width={320} height={320} className="rounded-xl" />
+            </figure >
             <div className="card-body items-center text-center">
-                <h2 className="card-title">Your Advent Calendar</h2>
+                <h2 className="card-title text-lg pb-4">Your Advent Calendar</h2>
 
-                <div className="card-actions" class="flex space-x-12 ...">
+                <div className="card-actions" class="flex gap-12">
 
                     <button className="btn btn-square btn-outline">
                         <IoShareSocial fontSize={30} />
