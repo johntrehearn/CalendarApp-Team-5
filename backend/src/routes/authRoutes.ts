@@ -1,6 +1,15 @@
 import express from "express";
 import axios from "axios";
 import sharp from "sharp";
+import stripePackage from "stripe";
+
+const stripe = new stripePackage(
+  "sk_test_51P32IZP7WrlB8etah6fHU1BNPacwJlR8XNFQ4qBIuRlPaYjQSMRXacQZ66A30vDYRQkOh2PPqLWmZc2YRiY3PgCS00FzGWVXgz"
+);
+
+import { sendEmail } from "../utils/confirmAccount";
+
+import image_generation from "../utils/generateImage";
 
 import * as admin from "firebase-admin";
 import generateTokenAndSetCookie from "../utils/generateToken";
@@ -32,6 +41,12 @@ router.post("/register", async (req, res) => {
         otherDetails: otherDetails,
         status: "free",
       });
+
+    // Send welcome email
+    // const emailSubject = "Welcome to our platform!";
+    // const emailHtml =
+    // "<h1>Welcome!</h1><p>Thank you for registering on our platform.</p>";
+    // await sendEmail(email, emailSubject, emailHtml);
 
     // User created successfully
     res.status(201).json({
@@ -177,97 +192,65 @@ router.get("/protectedCheck", verifyToken, (req: Request, res: Response) => {
   res.status(200).json({ message: "Access granted to protected route" });
 });
 
-// Route for Image Upload to Firebase Storage and verify token
-router.post("/uploadImage", async (req, res) => {
+// Route for generating and storing Christmas images for the user
+router.get("/generateImage/:uid", verifyToken, async (req, res) => {
   try {
-    const { uid, image } = req.body;
-    if (uid) {
-      // Verify token
-      admin
-        .auth()
-        .verifyIdToken(uid)
-        .then(async (decodedToken) => {
-          const userUid = decodedToken.uid;
-          if (userUid === uid) {
-            // Upload image to Firebase Storage
-            const bucket = admin.storage().bucket();
-            const imageBuffer = Buffer.from(image, "base64");
-            const file = bucket.file("images/" + userUid + ".png");
-            await file.save(imageBuffer, {
-              metadata: { contentType: "image/png" },
-            });
-            res.status(200).json({ message: "Image uploaded successfully" });
-          } else {
-            res.status(401).json({ error: "User not authenticated" });
-          }
-        })
-        .catch((error) => {
-          console.error("Error verifying token:", error);
-          res.status(401).json({ error: "Failed to verify token" });
-        });
-    } else {
-      res.status(401).json({ error: "User not authenticated" });
-    }
+    const { uid } = req.params;
+
+    // Generate image using OpenAI API
+    const imageUrlList = await image_generation();
+
+    // Download image using Axios
+    const imageResponse = await axios.get(imageUrlList[0], {
+      responseType: "arraybuffer",
+    });
+
+    // Resize image using Sharp
+    const resizedImageBuffer = await sharp(imageResponse.data)
+      //.resize(256, 256)
+      .toBuffer();
+
+    // Upload image to Firebase Storage
+    const bucket = admin.storage().bucket("prac-team5.appspot.com");
+    const file = bucket.file(`images/${uid}/${Date.now()}_${uid}.png`);
+    await file.save(resizedImageBuffer, {
+      metadata: { contentType: "image/png" },
+    });
+
+    res
+      .status(200)
+      .json({ message: "Image generated and stored successfully" });
   } catch (error) {
-    console.error("Error uploading image:", error);
-    res.status(500).json({ error: "Failed to upload image" });
+    console.error("Error generating and storing image:", error);
+    res.status(500).json({ error: "Failed to generate and store image" });
   }
 });
 
-// Route for Premium API call and verify token middleware
-router.get(
-  "/protectedImageGen",
-  verifyToken,
-  async (req: Request, res: Response) => {
-    try {
-      const { userId } = req.user as JwtPayload;
+// Route for creating a Stripe Checkout session
+router.post("/create-checkout-session", async (req, res) => {
+  try {
+    const { userId, priceId } = req.body;
 
-      // Array to store the URLs of the generated images
-      const imageUrls = [];
+    // Here you might want to find the user in your database and calculate the total price
+    // based on the products they want to purchase
 
-      // Loop 3 times to generate 3 images
-      for (let i = 0; i < 3; i++) {
-        // Make API call to DALL-E to generate a Christmas image
-        const response = await axios.post("DALL-E_API_ENDPOINT", {
-          prompt:
-            "small fun images, I would expect to find in Christmas calendar hatches",
-        });
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: "https://example.com/success",
+      cancel_url: "https://example.com/cancel",
+    });
 
-        // Assuming DALL-E returns image data in response.data
-        const imageData = response.data.image;
-
-        // Convert image data to buffer
-        const imageBuffer = Buffer.from(imageData, "base64");
-
-        // Store image buffer in Firebase Storage
-        const bucket = admin.storage().bucket("prac-team5.appspot.com");
-        const filename = `images/${userId}_christmas_image_${i}.png`;
-        const file = bucket.file(filename);
-        await file.save(imageBuffer, {
-          metadata: { contentType: "image/png" },
-        });
-
-        // Generate a signed URL for the file with a 1-day expiration
-        const [url] = await file.getSignedUrl({
-          action: "read",
-          expires: Date.now() + 1000 * 60 * 60 * 24, // 1 day
-        });
-
-        // Store the URL in the array
-        imageUrls.push(url);
-      }
-
-      res.status(200).json({
-        message: "Generated and stored Christmas images successfully",
-        imageUrls,
-      });
-    } catch (error) {
-      console.error("Error in protected route:", error);
-      res
-        .status(500)
-        .json({ error: "Failed to generate and store Christmas images" });
-    }
+    res.json({ id: session.id });
+  } catch (error) {
+    console.error("Error creating checkout session:", error);
+    res.status(500).json({ error: "Failed to create checkout session" });
   }
-);
-
+});
 export default router;
