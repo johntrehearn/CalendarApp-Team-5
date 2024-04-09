@@ -1,4 +1,4 @@
-# Project Folder Structure: Node.js Express Firebase MongoDB Backend
+# Project Folder Structure: Node.js Express Firebase Firestore Backend
 
 Basic folder structure for the backend services of the calendar app team 5. example files are listed as .js but this may change to .ts later. Only placeholder for now, things will shift or differ slightly as the project progresses.
 
@@ -10,7 +10,7 @@ Basic folder structure for the backend services of the calendar app team 5. exam
   - **middleware/**
     - authMiddleware.js # Middleware functions (authentication, authorization, most likely firebase.)
   - **models/**
-    - exampleModel.js # Data models (Mongoose schemas)
+    - exampleModel.js # Data models
   - **routes/**
     - exampleRoutes.js # Route definitions for the API endpoints
   - **services/**
