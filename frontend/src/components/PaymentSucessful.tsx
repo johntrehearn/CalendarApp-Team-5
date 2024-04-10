@@ -1,3 +1,4 @@
+/* import { FcCheckmark } from "react-icons/fc"; */
 function PaymentSuccessful() {
   return (
     <>
@@ -6,12 +7,7 @@ function PaymentSuccessful() {
           <center>
             <h2 className="card-title">Payment Outcome</h2>
           </center>
-          <figure>
-            {/* <img
-              src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-              alt="car!"
-            /> */}
-          </figure>
+          <figure>{/*      <FcCheckmark /> */}</figure>
           <div className="card-body">
             <div role="alert" className="alert alert-success">
               <svg
