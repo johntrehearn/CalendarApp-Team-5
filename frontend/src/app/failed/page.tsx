@@ -1,14 +1,14 @@
 function PaymentSuccessful() {
   return (
     <>
-      <div className="flex justify-center bg-[#131625]">
+      <div className="min-h-screen flex justify-center bg-[#131625]  failed-card">
         <div className="card w-96 glass ">
           <h2 className="card-title">Payment Outcome</h2>
           <figure>
             {/* <img
-              src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-              alt="car!"
-            /> */}
+                src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
+                alt="car!"
+              /> */}
           </figure>
           <div className="card-body">
             <div role="alert" className="alert alert-error">

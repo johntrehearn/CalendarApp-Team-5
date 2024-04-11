@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Payment success card */
+.success-card,
+.failed-card {
+  padding: 20rem;
+  width: 100%;
+}

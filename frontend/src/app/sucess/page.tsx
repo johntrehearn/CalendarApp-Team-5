@@ -2,7 +2,7 @@
 function PaymentSuccessful() {
   return (
     <>
-      <div className="flex justify-center bg-[#131625]">
+      <div className=" min-h-screen flex justify-center bg-[#131625] success-card">
         <div className="card w-96 glass ">
           <center>
             <h2 className="card-title">Payment Outcome</h2>
