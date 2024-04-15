@@ -1,8 +1,6 @@
 import Link from "next/link";
 
-interface Props {}
-
-const PageNotFound: React.FC<Props> = (): ReactElement => {
+const PageNotFound: React.FC = () => {
   return (
     <main>
       <div className="relative isolate overflow-hidden  py-16 sm:py-24 lg:py-32">
@@ -22,14 +20,6 @@ const PageNotFound: React.FC<Props> = (): ReactElement => {
                     <button className="btn bg-[#EFD7BB]">Go To Home</button>
                   </Link>
                 </p>
-                <figure className="my-4 mx-4">
-                  {/*  <Image
-                    src="/image.jpg"
-                    alt="Image"
-                    width={400}
-                    height={400}
-                  /> */}
-                </figure>
               </div>
             </div>
           </div>
