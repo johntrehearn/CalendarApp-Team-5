@@ -1,5 +1,6 @@
 import React from 'react';
 import style from './Hatch.module.css';
+import { fontTitle } from '@/app/utilities/font';
 
 type HatchProps = {
   num: number;
@@ -11,7 +12,7 @@ type HatchProps = {
 const Hatch: React.FC<HatchProps> = ({ num, imageUrl, isOpen, toggleHatch }) => {
   return (
     <button className={`${style.hatch} ${isOpen ? style.open : ''}`} onClick={() => toggleHatch(num)}>
-      <div className={style.cover}>{num}</div>
+      <div className={`${style.cover} ${fontTitle}`}>{num}</div>
       <div className={style.content} style={{ backgroundImage: `url(${imageUrl})` }}></div>
     </button>
   );
