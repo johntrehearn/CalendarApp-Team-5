@@ -163,9 +163,9 @@ const NewCalendarPage = () => {
   };
 
   return (
-    <main className="grid grid-cols-[300px_1fr] min-h-screen">
+    <main className="grid md:grid-cols-[300px_1fr] min-h-screen">
       {/* Settings */}
-      <section className="flex flex-col gap-12 py-8 px-4 bg-base text-white">
+      <section className="flex flex-col gap-12 max-w-[300px] mx-auto py-8 px-4 bg-base text-white">
         {/* Title */}
         <div>
           <h2 className="text-3xl">Title</h2>
