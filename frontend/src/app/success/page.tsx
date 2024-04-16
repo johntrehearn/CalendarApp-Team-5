@@ -1,16 +1,15 @@
+import "./success.css";
 import Link from "next/link";
 import { FcCheckmark } from "react-icons/fc";
 function PaymentSuccessful() {
   return (
     <>
       <div className=" min-h-screen flex justify-center success-card">
-        <div className="card w-96 glass ">
-          <center>
-            <h2 className="card-title">Payment Outcome</h2>
-          </center>
+        <div className="card w-96 h-80 mt-40 glass ">
           <figure>
-            <FcCheckmark />
+            <FcCheckmark size={100} />
           </figure>
+
           <div className="card-body">
             <div role="alert" className="alert alert-success">
               <svg
