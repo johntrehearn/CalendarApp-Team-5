@@ -14,7 +14,7 @@ const PageNotFound: React.FC = () => {
                 Looks like our webpage took a detour through Santa's workshop
                 and got lost in the tinsel.
               </p>
-              <div className="card-actions justify-end">
+              <div className="card-actions  flex justify-center">
                 <p>
                   <Link href="/">
                     <button className="btn bg-accent">Go To Home</button>
