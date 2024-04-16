@@ -1,6 +1,8 @@
+"use client";
 import "./success.css";
 import Link from "next/link";
 import { FcCheckmark } from "react-icons/fc";
+
 function PaymentSuccessful() {
   return (
     <>
@@ -29,7 +31,7 @@ function PaymentSuccessful() {
             </div>
             <div className="card-actions justify-end">
               <Link href="/">
-                <button className="btn bg-[#EFD7BB]">Go To Home</button>
+                <button className="btn  bg-accent">Go To Home</button>
               </Link>
             </div>
           </div>
