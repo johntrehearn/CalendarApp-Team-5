@@ -1,4 +1,4 @@
-import { fontTitle } from './layout';
+import { fontTitle } from './utilities/font';
 
 export default function Home() {
   return (
