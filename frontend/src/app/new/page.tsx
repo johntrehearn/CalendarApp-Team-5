@@ -64,8 +64,6 @@ const NewCalendarPage = () => {
         setData({ ...data, backgroundFile: file, backgroundUrl: getFileUrl(file) });
       } else {
         alert('Please upload an image!');
-        event.target.value = '';
-        setData({ ...data, backgroundFile: null, backgroundUrl: null });
       }
     }
   };
@@ -97,15 +95,6 @@ const NewCalendarPage = () => {
         setData({ ...data, hatches: updatedHatches });
       } else {
         alert('Please upload an image!');
-        event.target.value = '';
-        const updatedHatches = data.hatches.map((hatch) => {
-          if (hatch.num === currentHatch) {
-            hatch.imageFile = null;
-            hatch.imageUrl = null;
-          }
-          return hatch;
-        });
-        setData({ ...data, hatches: updatedHatches });
       }
     }
   };
@@ -201,7 +190,7 @@ const NewCalendarPage = () => {
               </button>
               <p>{currentHatch}</p>
               <button className="btn btn-warning btn-sm" onClick={() => handleCarouselNav('next')}>
-                &rarr; next
+                next &rarr;
               </button>
             </div>
             {/* Carousel items */}
