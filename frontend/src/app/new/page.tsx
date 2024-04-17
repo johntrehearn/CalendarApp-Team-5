@@ -1,6 +1,8 @@
 'use client';
 import React, { useState } from 'react';
 import Calendar from '@/components/Calendar';
+import { FaEdit } from 'react-icons/fa';
+import { FaArrowUpLong, FaArrowDownLong, FaCalendarDays } from 'react-icons/fa6';
 
 // This type is for the overall state of the New Calendar page
 // It will be used to pick necessary data for the Calendar component (preview)
@@ -164,8 +166,19 @@ const NewCalendarPage = () => {
 
   return (
     <main className="grid md:grid-cols-[300px_1fr] min-h-screen">
+      {/* View navigation */}
+      <div className="md:hidden flex flex-col gap-3 w-max fixed bottom-5 right-5 z-20">
+        <a href="#settings" className="btn btn-sm btn-accent text-lg">
+          <FaArrowUpLong />
+          <FaEdit />
+        </a>
+        <a href="#preview" className="btn btn-sm btn-accent text-lg">
+          <FaArrowDownLong />
+          <FaCalendarDays />
+        </a>
+      </div>
       {/* Settings */}
-      <section className="flex flex-col gap-12 max-w-[300px] mx-auto py-8 px-4 bg-base text-white">
+      <section id="settings" className="flex flex-col gap-12 max-w-[300px] mx-auto py-8 px-4 bg-base text-white">
         {/* Title */}
         <div>
           <h2 className="text-3xl">Title</h2>
@@ -224,7 +237,7 @@ const NewCalendarPage = () => {
       </section>
 
       {/* Preview */}
-      <section>
+      <section id="preview">
         <Calendar title={data.title} backgroundUrl={data.backgroundUrl} hatches={data.hatches} toggleHatch={toggleHatch} />
       </section>
     </main>
