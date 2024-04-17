@@ -24,13 +24,13 @@ const MenuItems = () => {
     return (
       <>
         <li>
-          <Link href="/calendars" className="btn btn-link clr-accent hover:btn-outline font-normal">
+          <Link href="/calendars" className="btn btn-link clr-accent hover:btn-outline font-normal text-lg">
             <FaCalendarDays />
             My Calendars
           </Link>
         </li>
         <li>
-          <button onClick={handleLogout} className="btn btn-outline clr-accent font-normal">
+          <button onClick={handleLogout} className="btn btn-outline clr-accent font-normal text-lg">
             Log Out
           </button>
         </li>
@@ -41,12 +41,12 @@ const MenuItems = () => {
     return (
       <>
         <li>
-          <Link href="/register" className="btn bg-accent">
+          <Link href="/register" className="btn bg-accent text-lg">
             Register
           </Link>
         </li>
         <li>
-          <Link href="/login" className="btn btn-outline font-normal clr-accent">
+          <Link href="/login" className="btn btn-outline font-normal clr-accent text-lg">
             Log In
           </Link>
         </li>
