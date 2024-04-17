@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Lato } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { AuthProvider } from '@/contexts/AuthContext';
 
 // Font setup
@@ -24,6 +25,7 @@ export default function RootLayout({
         <AuthProvider>
           <Header />
           {children}
+          <Footer />
         </AuthProvider>
       </body>
     </html>
