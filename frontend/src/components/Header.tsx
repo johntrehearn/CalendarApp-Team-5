@@ -57,7 +57,7 @@ const MenuItems = () => {
 
 const Header = () => {
   return (
-    <header className="bg-base">
+    <header className="bg-base mb-5 py-3">
       <nav className="navbar content-width">
         {/* NAVBAR LEFT SIDE */}
         <div className="navbar-start">
