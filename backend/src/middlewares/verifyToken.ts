@@ -16,8 +16,9 @@ declare global {
 }
 
 const verifyToken = (req: Request, res: Response, next: NextFunction): void => {
-  // Get token from the cookie
-  const token: string | undefined = req.cookies.jwt;
+  // Get token from the Authorization header
+  const authHeader: string | undefined = req.headers.authorization;
+  const token: string | undefined = authHeader && authHeader.split(" ")[1];
 
   // Check if token is provided
   if (!token) {

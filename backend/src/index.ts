@@ -8,6 +8,7 @@ import morgan from "morgan";
 import logger from "../src/utils/logger";
 import getDatabase from "../src/config/database";
 import authRoutes from "../src/routes/authRoutes";
+import paymentRoutes from "../src/routes/PaymentRoutes";
 
 const app = express(); // Create an Express application
 
@@ -15,21 +16,32 @@ const app = express(); // Create an Express application
 import { config } from "dotenv";
 config();
 
-app.use(cors()); // Enable All CORS Requests
+// Middleware to enable CORS
+const corsOptions = {
+  origin: "http://localhost:3000", // this must match the origin of the request front-end
+  credentials: true, // this allows the session cookie to be sent with the request
+};
+
+app.use(cors(corsOptions)); // Enable All CORS Requests
 app.use(compression()); // Compress all routes and responses
 app.use(cookieParser()); // Parse Cookie header and populate req.cookies with an object keyed by the cookie names
-app.use(bodyParser.json()); // Parse incoming request bodies in a middleware before your handlers, available under the req.body property
 app.use(morgan(":method :url :status :response-time ms")); // Logging HTTP requests to the console
 
-//app.use("/calendar", calendarRouter);
+// ------------------------------------------------------------------------------------------------------------------------------------
 
-// Use authRoutes
+app.use("/payment", paymentRoutes); // Use the payment routes for the /payment endpoint without BodyParser
+
+app.use(bodyParser.json()); // Parse incoming request bodies in a middleware before your handlers, available under the req.body property
 app.use("/auth", authRoutes);
+
+//app.use("/calendar", calendarRouter)
 
 // Default route for the API
 app.get("/", (req, res) => {
   res.send("Calendar API is running 🚀");
 });
+
+// ------------------------------------------------------------------------------------------------------------------------------------
 
 const server = http.createServer(app); // Create an HTTP server
 
