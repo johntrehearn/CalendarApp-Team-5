@@ -171,7 +171,7 @@ const NewCalendarPage = () => {
         {/* Title */}
         <div>
           <h2 className="text-3xl">Title</h2>
-          <input type="text" placeholder="Enter calendar title" className="input input-bordered w-full max-w-xs text-stone-900" onChange={handleTitleChange} />
+          <input type="text" placeholder="Enter calendar title" className="input input-bordered w-full max-w-xs text-stone-900 bg-white" onChange={handleTitleChange} />
         </div>
         {/* Background */}
         <div>
