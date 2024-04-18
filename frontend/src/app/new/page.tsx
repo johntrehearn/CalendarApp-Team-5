@@ -196,7 +196,7 @@ const NewCalendarPage = () => {
             {/* Carousel items */}
             <div>
               {data.hatches.map((hatch, index) => (
-                <div key={hatch.num} className={index === currentHatch ? 'block' : 'hidden'}>
+                <div key={hatch.num} className={hatch.num === currentHatch ? 'block' : 'hidden'}>
                   <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900" onChange={handleHatchChange} />
                 </div>
               ))}
