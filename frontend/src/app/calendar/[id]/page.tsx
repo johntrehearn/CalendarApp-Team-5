@@ -1,21 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Calendar from '@/components/Calendar';
 
-type Props = {};
-
-const SingleCalendarPage = (props: Props) => {
-  // This will be an async function that fetches the calendar data from the backend, e.g.
-  /*
-  const handleFetchCalendarData = () => {
-    const fetchedCalData = await fetch('http://localhost:3000/api/calendar/1');
-    setCalendarData(fetchedCalData.calendar1);
-  };
-  */
-  // Call the function in an event handler or JSX attribute
-  // handleFetchCalendarData();
-
+const SingleCalendarPage = () => {
   // For now, we'll use a hardcoded object for the fetched data
   const fetchedCalData = {
     title: 'Advent Calendar',
@@ -48,19 +36,52 @@ const SingleCalendarPage = (props: Props) => {
     ],
   };
 
-  const [data, setData] = useState(fetchedCalData);
+  // This will be an async function that fetches the calendar data from the backend
+  // This can be extracted from { calendar1: {< this will be fetched data >} }
+  /*
+  const [calendarData, setCalendarData] = useState<{
+    title: string;
+    backgroundUrl: string;
+    hatches: { num: number; imageUrl: string; isOpen: boolean }[];
+  } | null>(null);
 
-  const toggleHatch = (num: number) => {
-    const updatedHatches = data.hatches.map((hatch) => {
-      if (hatch.num === num) {
-        hatch.isOpen = !hatch.isOpen;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('API_URL_HERE');
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        setCalendarData(data);
+      } catch (error) {
+        console.error('Error fetching calendar data:', error);
       }
-      return hatch;
-    });
-    setData({ ...data, hatches: updatedHatches });
+    };
+
+    fetchData();
+  }, []);
+  */
+
+  const [calendarData, setCalendarData] = useState(fetchedCalData);
+
+  const toggleHatch = (hatchNum: number) => {
+    if (calendarData) {
+      const updatedHatches = calendarData.hatches.map((hatch) => {
+        if (hatch.num === hatchNum) {
+          return { ...hatch, isOpen: !hatch.isOpen };
+        }
+        return hatch;
+      });
+
+      setCalendarData({
+        ...calendarData,
+        hatches: updatedHatches,
+      });
+    }
   };
 
-  return <Calendar title={data.title} backgroundUrl={data.backgroundUrl} hatches={data.hatches} toggleHatch={toggleHatch} />;
+  return <div className="parent-component">{calendarData ? <Calendar title={calendarData.title} backgroundUrl={calendarData.backgroundUrl} hatches={calendarData.hatches} toggleHatch={toggleHatch} /> : <p>Loading...</p>}</div>;
 };
 
 export default SingleCalendarPage;
