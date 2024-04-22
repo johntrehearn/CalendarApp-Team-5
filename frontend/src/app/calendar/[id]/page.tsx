@@ -64,52 +64,68 @@ const SingleCalendarPage = () => {
   }, []);
   */
 
+  // State for the calendar data
   const [calendarData, setCalendarData] = useState<{
     title: string;
     backgroundUrl: string;
     hatches: { num: number; imageUrl: string; isOpen: boolean }[];
   } | null>(fetchedCalData);
 
+  // Function to toggle the hatch open/closed
+  // It is restricted to only open hatches that fit the criteria
+  // ALSO UPDATE THE BACKEND? When should it happen?
   const toggleHatch = (hatchNum: number) => {
+    // Do nothing if there is no calendar data
     if (!calendarData) {
       return;
     }
+    // Get the current month and day
+    // To test, write "2024-12-24" inside newDate()
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth() + 1;
     const currentDay = currentDate.getDate();
 
+    // Set the criteria for opening a hatch
+    // Has to be december, and the hatch number has to be less than or equal to the current day
+    // If it's past december 24, all hatches can be opened (but still has to be december)
     const isDecember = currentMonth === 12;
-    const isPastDec24 = isDecember && currentDay > 24;
     const isAdventDay = hatchNum <= currentDay && isDecember;
+    const isPastDec24 = isDecember && currentDay > 24;
 
+    // Init the variable to check if the hatch can be opened
     let canOpenHatch = false;
-
+    // Set the variable to true if the hatch can be opened
     if (isPastDec24 || isAdventDay) {
       canOpenHatch = true;
     }
 
+    // If the hatch can't be opened, show an alert and return
     if (!canOpenHatch) {
       alert("You can't open this hatch yet!");
       return;
     }
 
+    // If the hatch can be opened, toggle the hatch and update the state
     const updatedHatches = calendarData.hatches.map((hatch) => {
       if (hatch.num === hatchNum) {
         return { ...hatch, isOpen: !hatch.isOpen };
       }
       return hatch;
     });
-
     setCalendarData({
       ...calendarData,
       hatches: updatedHatches,
     });
   };
 
+  // Function to handle the share button
+  // Maybe it could open a modal with a link to the calendar? Or copy the link to the clipboard?
   const handleShare = () => {
     console.log('Share button clicked');
   };
 
+  // Without calendar data, show a loading message
+  // Also error message if the calendar doesn't exist?
   return (
     <div>
       {calendarData && (
