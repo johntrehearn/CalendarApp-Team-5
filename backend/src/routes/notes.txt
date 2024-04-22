@@ -1,0 +1,68 @@
+router.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  async (req, res) => {
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        req.headers["stripe-signature"],
+        endpointSecret
+      );
+    } catch (err) {
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    switch (event.type) {
+      case "checkout.session.completed":
+        const session = event.data.object;
+        const userId = session.client_reference_id; // Make sure to set this when creating the session
+        // Update user status in Firebase Realtime Database
+        const db = admin.database();
+        const ref = db.ref(`users/${userId}`);
+        await ref.update({ status: "premium" });
+        break;
+      case "payment_intent.succeeded":
+        const paymentIntentSucceeded = event.data.object;
+        console.log(paymentIntentSucceeded);
+        // Then define and call a function to handle the event payment_intent.succeeded
+        break;
+      case "payment_intent.created":
+        const paymentIntentCreated = event.data.object;
+        // Define and call a function to handle the event payment_intent.created
+        break;
+      case "checkout.session.async_payment_succeeded":
+        const asyncPaymentSession = event.data.object;
+        // Define and call a function to handle the event checkout.session.async_payment_succeeded
+        break;
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+
+    // Return a 200 response to acknowledge receipt of the event
+    res.json({ received: true });
+    console.log("Stripe webhook received");
+  }
+);
+
+
+--------------------------------------------------------------------------------
+
+stripe listen --forward-to localhost:8080/payment/webhook
+
+stripe trigger payment_intent.succeeded
+
+stripe trigger checkout.session.completed
+
+
+
+------------------------------------------------------------------------------------------------
+
+ SETTINGS FOR DEPLOYED BACKEND, NODEMON.JSON
+
+{
+  "watch": ["src"],
+  "ext": ".ts, .js",
+  "exec": "node ./dist/index.js"
+}

@@ -22,7 +22,12 @@ const router = express.Router();
 // Route for user registration using Firebase Auth and Realtime Database
 router.post("/register", async (req, res) => {
   try {
-    const { email, password, displayName, otherDetails } = req.body;
+    const { email, password, displayName, otherDetails, status } = req.body;
+
+    // Check if status is not "free"
+    if (status && status !== "free") {
+      return res.status(400).json({ error: "Invalid status value" });
+    }
 
     // Create user using Firebase Auth
     const userRecord = await admin.auth().createUser({
@@ -30,8 +35,7 @@ router.post("/register", async (req, res) => {
       password,
       displayName,
     });
-
-    // Store additional user details
+    // Store additional user details in Realtime Database
     await admin
       .database()
       .ref("users/" + userRecord.uid)
@@ -41,6 +45,25 @@ router.post("/register", async (req, res) => {
         otherDetails: otherDetails,
         status: "free",
       });
+
+    // Store additional user details in Firestore
+    const calendar = {
+      title: "Advent Calendar",
+      backgroundFile: {
+        /* File object */
+      },
+      hatches: Array.from({ length: 24 }, (_, i) => ({
+        num: i + 1,
+        imageFile: null,
+        isOpen: false,
+      })),
+    };
+
+    await admin
+      .firestore()
+      .collection("users")
+      .doc(userRecord.uid)
+      .set(calendar);
 
     // Send welcome email
     // const emailSubject = "Welcome to our platform!";
@@ -67,28 +90,30 @@ router.post("/register", async (req, res) => {
 // Route for user login using Firebase Auth and Realtime Database
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const idToken = req.body.idToken as string; // Firebase ID token
 
-    // Sign in user using Firebase Auth
-    const userRecord = await admin.auth().getUserByEmail(email);
+    // Verify the ID token
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const uid = decodedToken.uid;
+
+    // Set the user ID in the session
+    //req.session.userId = uid;
 
     // Retrieve user status from the database
     const userStatusSnapshot = await admin
       .database()
-      .ref("users/" + userRecord.uid + "/status")
+      .ref("users/" + uid + "/status")
       .once("value");
     const userStatus = userStatusSnapshot.val();
 
     // Generate JWT token
-    const token = generateTokenAndSetCookie(userRecord.uid, userStatus, res);
+    const token = generateTokenAndSetCookie(uid, userStatus, res);
 
     // User signed in successfully
     res.status(200).json({
       message: "User signed in successfully",
       user: {
-        uid: userRecord.uid,
-        email: userRecord.email,
-        displayName: userRecord.displayName,
+        uid: uid,
         status: userStatus,
       },
       token: token,
@@ -231,8 +256,9 @@ router.post("/create-checkout-session", async (req, res) => {
   try {
     const { userId, priceId } = req.body;
 
-    // Here you might want to find the user in your database and calculate the total price
-    // based on the products they want to purchase
+    console.log("Received userId:", userId); // Log the userId
+
+    // Here you might want to find the user in your database based in userId
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -243,8 +269,9 @@ router.post("/create-checkout-session", async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: "https://example.com/success",
+      success_url: "http://localhost:3000/success",
       cancel_url: "https://example.com/cancel",
+      client_reference_id: userId,
     });
 
     res.json({ id: session.id });
@@ -253,4 +280,5 @@ router.post("/create-checkout-session", async (req, res) => {
     res.status(500).json({ error: "Failed to create checkout session" });
   }
 });
+
 export default router;
