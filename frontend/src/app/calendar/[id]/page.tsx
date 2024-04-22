@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Calendar from '@/components/Calendar';
 
 const SingleCalendarPage = () => {
-  // For now, we'll use a hardcoded object for the fetched data
+  // For now, we'll use a hardcoded object or null for the fetched data
   const fetchedCalData = {
     title: 'Advent Calendar',
     backgroundUrl: 'https://images.pexels.com/photos/18512842/pexels-photo-18512842/free-photo-of-autumn-forest-at-night.jpeg',
@@ -35,6 +35,7 @@ const SingleCalendarPage = () => {
       { num: 24, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
     ],
   };
+  // const fetchedCalData = null;
 
   // This will be an async function that fetches the calendar data from the backend
   // Data can be extracted from { calendar1: {< this is the data we need >} }
@@ -63,28 +64,64 @@ const SingleCalendarPage = () => {
   }, []);
   */
 
-  const [calendarData, setCalendarData] = useState(fetchedCalData);
+  const [calendarData, setCalendarData] = useState<{
+    title: string;
+    backgroundUrl: string;
+    hatches: { num: number; imageUrl: string; isOpen: boolean }[];
+  } | null>(fetchedCalData);
 
   const toggleHatch = (hatchNum: number) => {
-    if (calendarData) {
-      const updatedHatches = calendarData.hatches.map((hatch) => {
-        if (hatch.num === hatchNum) {
-          return { ...hatch, isOpen: !hatch.isOpen };
-        }
-        return hatch;
-      });
-
-      setCalendarData({
-        ...calendarData,
-        hatches: updatedHatches,
-      });
+    if (!calendarData) {
+      return;
     }
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentDay = currentDate.getDate();
+
+    const isDecember = currentMonth === 12;
+    const isPastDec24 = isDecember && currentDay > 24;
+    const isAdventDay = hatchNum <= currentDay && isDecember;
+
+    let canOpenHatch = false;
+
+    if (isPastDec24 || isAdventDay) {
+      canOpenHatch = true;
+    }
+
+    if (!canOpenHatch) {
+      alert("You can't open this hatch yet!");
+      return;
+    }
+
+    const updatedHatches = calendarData.hatches.map((hatch) => {
+      if (hatch.num === hatchNum) {
+        return { ...hatch, isOpen: !hatch.isOpen };
+      }
+      return hatch;
+    });
+
+    setCalendarData({
+      ...calendarData,
+      hatches: updatedHatches,
+    });
+  };
+
+  const handleShare = () => {
+    console.log('Share button clicked');
   };
 
   return (
     <div>
-      {calendarData ? <Calendar title={calendarData.title} backgroundUrl={calendarData.backgroundUrl} hatches={calendarData.hatches} toggleHatch={toggleHatch} /> : <p>Loading...</p>}
-      <button className="btn">Share</button>
+      {calendarData && (
+        <div>
+          <Calendar title={calendarData.title} backgroundUrl={calendarData.backgroundUrl} hatches={calendarData.hatches} toggleHatch={toggleHatch} />
+          <button className="btn bg-accent fixed bottom-5 right-5 z-10" onClick={handleShare}>
+            Share
+          </button>
+        </div>
+      )}
+
+      {!calendarData && <p>Loading...</p>}
     </div>
   );
 };
