@@ -37,7 +37,7 @@ const SingleCalendarPage = () => {
   };
 
   // This will be an async function that fetches the calendar data from the backend
-  // This can be extracted from { calendar1: {< this will be fetched data >} }
+  // Data can be extracted from { calendar1: {< this is the data we need >} }
   /*
   const [calendarData, setCalendarData] = useState<{
     title: string;
@@ -81,7 +81,12 @@ const SingleCalendarPage = () => {
     }
   };
 
-  return <div className="parent-component">{calendarData ? <Calendar title={calendarData.title} backgroundUrl={calendarData.backgroundUrl} hatches={calendarData.hatches} toggleHatch={toggleHatch} /> : <p>Loading...</p>}</div>;
+  return (
+    <div>
+      {calendarData ? <Calendar title={calendarData.title} backgroundUrl={calendarData.backgroundUrl} hatches={calendarData.hatches} toggleHatch={toggleHatch} /> : <p>Loading...</p>}
+      <button className="btn">Share</button>
+    </div>
+  );
 };
 
 export default SingleCalendarPage;
