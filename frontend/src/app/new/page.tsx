@@ -152,11 +152,14 @@ const NewCalendarPage = () => {
     isOpen: boolean;
   };
   const handleSubmit = () => {
+    // Log data state for testing purposes (data state is for the page, not for backend)
     console.log('Data state: ', data);
+    // Build the data for the backend
     const calendar: CalendarForBackend = { title: data.title, backgroundFile: data.backgroundFile, backgroundUrl: '', hatches: [] };
     const hatches = data.hatches.map((hatch) => ({ num: hatch.num, imageFile: hatch.imageFile, imageUrl: '', isOpen: false }));
     calendar.hatches = [...hatches];
-    const dataForBackend: DataForBackend = { calendar1: calendar };
+    const dataForBackend: DataForBackend = { calendar1: calendar }; // calendar1 is hardcoded for now!!!
+    // Log data for the backend for testing purposes
     console.log('Data for backend: ', dataForBackend);
   };
 
