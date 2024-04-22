@@ -4,12 +4,9 @@ import React from 'react';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { fontTitle } from '../utilities/font';
-
 import { IoIosStar } from "react-icons/io";
 
-type Props = {};
-
-const LoginPage = (props: Props) => {
+const LoginPage = () => {
   const { login } = useAuthContext();
   const router = useRouter();
 
@@ -22,20 +19,14 @@ const LoginPage = (props: Props) => {
   };
 
   return (
-    <div className='h-screen flex items-center justify-center'>
+    <div className='flex items-center justify-center'>
 
       <div className="card w-80 bg-[#e2e8f0] shadow-xl px-6 py-4">
 
-        <div className='flex items-center justify-between justify-center '>
-
-          <div>
-            <IoIosStar fontSize={30} />
-          </div>
+        <div className='flex items-center justify-between'>
+          <IoIosStar fontSize={30} />
           <div className={`${fontTitle} text-4xl text-[color:purple] text-current bg-[#e2e8f0]  my-8 text-center`}>Log In</div>
-          <div>
-            <IoIosStar fontSize={30} />
-          </div>
-
+          <IoIosStar fontSize={30} />
         </div>
 
         <form className="flex flex-col items-center gap-5">
