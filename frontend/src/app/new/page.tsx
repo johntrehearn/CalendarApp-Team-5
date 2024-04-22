@@ -136,20 +136,27 @@ const NewCalendarPage = () => {
   // and prepares the data for the backend
   // It will be extended with a POST request, a message? and a redirect to the My Calendars page
   interface DataForBackend {
+    // The calendar reference (calendar1) is hard coded for now, but it should be dynamic in the future
+    calendar1: CalendarForBackend;
+  }
+  interface CalendarForBackend {
     title: string;
     backgroundFile: File | null;
+    backgroundUrl: string;
     hatches: HatchForBackend[];
   }
   type HatchForBackend = {
     num: number;
     imageFile: File | null;
+    imageUrl: string;
     isOpen: boolean;
   };
   const handleSubmit = () => {
     console.log('Data state: ', data);
-    const dataForBackend: DataForBackend = { title: data.title, backgroundFile: data.backgroundFile, hatches: [] };
-    const hatchesForBackend = data.hatches.map((hatch) => ({ num: hatch.num, imageFile: hatch.imageFile, isOpen: false }));
-    dataForBackend.hatches = [...hatchesForBackend];
+    const calendar: CalendarForBackend = { title: data.title, backgroundFile: data.backgroundFile, backgroundUrl: '', hatches: [] };
+    const hatches = data.hatches.map((hatch) => ({ num: hatch.num, imageFile: hatch.imageFile, imageUrl: '', isOpen: false }));
+    calendar.hatches = [...hatches];
+    const dataForBackend: DataForBackend = { calendar1: calendar };
     console.log('Data for backend: ', dataForBackend);
   };
 
