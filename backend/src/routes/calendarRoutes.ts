@@ -1,12 +1,14 @@
-// Routes and DB queries for will go here
+// Routes Calendar DB queries for will go here
 import admin from "firebase-admin";
 import express from "express";
 
 const router = express.Router();
 
+// -----------------------------------------------------------------------------------------------------------------------------------------------------
+
 // Route to retrieve all calendars for a user
 
-router.get("/:uid", async (req, res) => {
+router.get("getcalendars/:uid", async (req, res) => {
   try {
     const { uid } = req.params;
 
@@ -29,7 +31,7 @@ router.get("/:uid", async (req, res) => {
 
 // Retrieve a specific calendar
 
-router.get("/:uid/:calendarId", async (req, res) => {
+router.get("getcalendar/:uid/:calendarId", async (req, res) => {
   try {
     const { uid, calendarId } = req.params;
 
@@ -57,7 +59,7 @@ router.get("/:uid/:calendarId", async (req, res) => {
 
 // delete a specific calendar
 
-router.delete("/:uid/:calendarId", async (req, res) => {
+router.delete("deletecalendar/:uid/:calendarId", async (req, res) => {
   try {
     const { uid, calendarId } = req.params;
 
@@ -90,7 +92,7 @@ router.delete("/:uid/:calendarId", async (req, res) => {
 
 // create a new calendar for a user with the next number
 
-router.post("/:uid", async (req, res) => {
+router.post("addcalendar/:uid", async (req, res) => {
   try {
     const { uid } = req.params;
 
