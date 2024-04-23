@@ -33,10 +33,10 @@ app.use(morgan(":method :url :status :response-time ms")); // Logging HTTP reque
 app.use("/payment", paymentRoutes); // Use the payment routes for the /payment endpoint without BodyParser
 
 app.use(bodyParser.json()); // Parse incoming request bodies in a middleware before your handlers, available under the req.body property
-app.use("/auth", authRoutes);
-app.use("/calendar", calendarRoutes);
+app.use("/auth", authRoutes); // Use the auth routes for the /auth endpoint
+app.use("/calendar", calendarRoutes); // Use the calendar routes for the /calendar endpoint
 
-//app.use("/calendar", calendarRouter)
+// ------------------------------------------------------------------------------------------------------------------------------------
 
 // Default route for the API
 app.get("/", (req, res) => {
