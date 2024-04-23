@@ -4,6 +4,8 @@ import express from "express";
 
 const router = express.Router();
 
+// Route to retrieve all calendars for a user
+
 router.get("/:uid", async (req, res) => {
   try {
     const { uid } = req.params;
@@ -85,4 +87,52 @@ router.delete("/:uid/:calendarId", async (req, res) => {
     res.status(500).json({ error: "Failed to delete calendar" });
   }
 });
+
+// create a new calendar for a user with the next number
+
+router.post("/:uid", async (req, res) => {
+  try {
+    const { uid } = req.params;
+
+    // Retrieve user's calendar data from Firestore
+    const userDoc = await admin.firestore().collection("users").doc(uid).get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const userData = userDoc.data();
+
+    // Get the current number of calendars
+    const currentCalendarCount = Object.keys(userData.calendars).length;
+
+    // Create a new calendar with the next number
+    const newCalendar = {
+      title: `Advent Calendar ${currentCalendarCount + 1}`,
+      backgroundFile: "Your background file here",
+      backgroundUrl: "",
+      hatches: Array.from({ length: 24 }, (_, i) => ({
+        num: i + 1,
+        imageFile: "Your image file here",
+        imageUrl: "",
+        isOpen: false,
+      })),
+    };
+
+    // Add the new calendar to the user's data
+    userData.calendars = {
+      ...userData.calendars,
+      [`calendar${currentCalendarCount + 1}`]: newCalendar,
+    };
+
+    // Update the user's data in Firestore
+    await admin.firestore().collection("users").doc(uid).set(userData);
+
+    res.json({ message: "Calendar created successfully" });
+  } catch (error) {
+    console.error("Error creating calendar:", error);
+    res.status(500).json({ error: "Failed to create calendar" });
+  }
+});
+
 export default router;
