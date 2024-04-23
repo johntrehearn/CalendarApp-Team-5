@@ -4,22 +4,6 @@ import Calendar from '@/components/Calendar';
 import { FaEdit } from 'react-icons/fa';
 import { FaArrowUpLong, FaArrowDownLong, FaCalendarDays } from 'react-icons/fa6';
 
-// This type is for the overall state of the New Calendar page
-// It will be used to pick necessary data for the Calendar component (preview)
-// and for the backend (submit)
-type DataType = {
-  title: string;
-  backgroundFile: File | null;
-  backgroundUrl: string | null;
-  hatches: HatchType[];
-};
-type HatchType = {
-  num: number;
-  imageFile: File | null;
-  imageUrl: string | null;
-  isOpen: boolean;
-};
-
 // HELPER FUNCTIONS
 // Extract url string from File object
 const getFileUrl = (file: File) => URL.createObjectURL(file);
@@ -30,29 +14,60 @@ const isSafeImageType = (fileType: string) => {
   return safeImageTypes.includes(fileType);
 };
 
-// NEW CALENDAR PAGE
+// EDIT CALENDAR PAGE
 const EditCalendarPage = () => {
-  // DATA STATE
-  // It uses DataType defined above
-  // Default values are mostly null or empty arrays so the user can fill them in
-  // The hatches array is initialized with 24 (hardcoded) elements for now
-  // and they are open by default for easier viewing
-  const [data, setData] = useState<DataType>({
-    title: '',
-    backgroundFile: null,
-    backgroundUrl: null,
-    hatches: new Array(24).fill(null).map((_, index) => ({
-      num: index + 1,
-      imageFile: null,
-      imageUrl: null,
-      isOpen: true,
-    })),
-  });
+  // For now, we'll use a hardcoded object or null for the fetched data
+  const fetchedCalData = {
+    title: 'Advent Calendar',
+    backgroundUrl: 'https://images.pexels.com/photos/18512842/pexels-photo-18512842/free-photo-of-autumn-forest-at-night.jpeg',
+    hatches: [
+      { num: 1, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 2, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 3, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 4, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 5, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 6, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 7, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 8, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 9, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 10, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 11, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 12, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 13, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 14, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 15, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 16, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 17, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 18, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 19, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 20, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 21, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 22, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 23, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+      { num: 24, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
+    ],
+  };
+  // const fetchedCalData = null;
+
+  // State for the incoming calendar data
+  const [calendarData, setCalendarData] = useState<{
+    title: string;
+    backgroundUrl: string;
+    hatches: { num: number; imageUrl: string; isOpen: boolean }[];
+  } | null>(fetchedCalData);
+
+  // State for the changed data
+  const [changes, setChanges] = useState<{
+    title?: string;
+    backgroundFile?: File | null;
+    backgroundUrl?: string;
+    hatches?: { num: number; imageFile: File | null }[];
+  }>({});
 
   // SET TITLE
   // This function updates the calendar title in the state
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setData({ ...data, title: event.target.value });
+    setChanges({ ...changes, title: event.target.value });
   };
 
   // SET BACKGROUND
@@ -61,7 +76,7 @@ const EditCalendarPage = () => {
     const file = event.target.files?.[0];
     if (file) {
       if (isSafeImageType(file.type)) {
-        setData({ ...data, backgroundFile: file, backgroundUrl: getFileUrl(file) });
+        setChanges({ ...changes, backgroundFile: file, backgroundUrl: getFileUrl(file) });
       } else {
         alert('Please upload an image!');
       }
@@ -85,14 +100,15 @@ const EditCalendarPage = () => {
     const file = event.target.files?.[0];
     if (file) {
       if (isSafeImageType(file.type)) {
-        const updatedHatches = data.hatches.map((hatch) => {
-          if (hatch.num === currentHatch) {
-            hatch.imageFile = file;
-            hatch.imageUrl = getFileUrl(file);
-          }
-          return hatch;
-        });
-        setData({ ...data, hatches: updatedHatches });
+        setChanges({ ...changes, hatches: [{ num: currentHatch, imageFile: file }] });
+        // const updatedHatches = calendarData?.hatches.map((hatch) => {
+        //   if (hatch.num === currentHatch) {
+        //     hatch.imageFile = file;
+        //     hatch.imageUrl = getFileUrl(file);
+        //   }
+        //   return hatch;
+        // });
+        // setData({ ...data, hatches: updatedHatches });
       } else {
         alert('Please upload an image!');
       }
@@ -102,33 +118,25 @@ const EditCalendarPage = () => {
   // and updates the state accordingly
   // The hatches are open by default, and there's no restriction here
   const toggleHatch = (num: number) => {
-    const updatedHatches = data.hatches.map((hatch) => {
+    if (!calendarData) return;
+    const updatedHatches = calendarData?.hatches.map((hatch) => {
       if (hatch.num === num) {
         hatch.isOpen = !hatch.isOpen;
       }
       return hatch;
     });
-    setData({ ...data, hatches: updatedHatches });
+    setCalendarData({ ...calendarData, hatches: updatedHatches });
   };
-  // Manipulate the order of the hatches
-  const handleRandomOrder = () => {
-    const hatchesCopy = [...data.hatches];
-    hatchesCopy.sort(() => Math.random() - 0.5);
-    setData({ ...data, hatches: hatchesCopy });
-  };
-  const handleResetOrder = () => {
-    const hatchesCopy = [...data.hatches];
-    hatchesCopy.sort((a, b) => a.num - b.num);
-    setData({ ...data, hatches: hatchesCopy });
-  };
+
   // Toggle all hatches open/closed
   const handleToggleAll = () => {
-    const toggleCriteria = !data.hatches[0].isOpen;
-    const updatedHatches = data.hatches.map((hatch) => {
+    if (!calendarData) return;
+    const toggleCriteria = !calendarData.hatches[0].isOpen;
+    const updatedHatches = calendarData.hatches.map((hatch) => {
       hatch.isOpen = toggleCriteria;
       return hatch;
     });
-    setData({ ...data, hatches: updatedHatches });
+    setCalendarData({ ...calendarData, hatches: updatedHatches });
   };
 
   // SUBMIT
@@ -152,6 +160,9 @@ const EditCalendarPage = () => {
     isOpen: boolean;
   };
   const handleSubmit = () => {
+    console.log('Changes: ', changes);
+
+    /*
     // Log data state for testing purposes (data state is for the page, not for backend)
     console.log('Data state: ', data);
     // Build the data for the backend
@@ -161,6 +172,7 @@ const EditCalendarPage = () => {
     const dataForBackend: DataForBackend = { calendar1: calendar }; // calendar1 is hardcoded for now!!!
     // Log data for the backend for testing purposes
     console.log('Data for backend: ', dataForBackend);
+    */
   };
 
   return (
@@ -205,22 +217,14 @@ const EditCalendarPage = () => {
             </div>
             {/* Carousel items */}
             <div>
-              {data.hatches.map((hatch, index) => (
-                <div key={hatch.num} className={hatch.num === currentHatch ? 'block' : 'hidden'}>
-                  <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900" onChange={handleHatchChange} />
-                </div>
-              ))}
+              {calendarData &&
+                calendarData.hatches.map((hatch, index) => (
+                  <div key={hatch.num} className={hatch.num === currentHatch ? 'block' : 'hidden'}>
+                    <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900" onChange={handleHatchChange} />
+                  </div>
+                ))}
             </div>
-            {/* Hatch order buttons */}
-            <div className="bg-slate-700 flex flex-col gap-3 text-center p-2 rounded">
-              <h3>Hatch order</h3>
-              <button className="btn btn-warning btn-outline btn-sm" onClick={handleRandomOrder}>
-                Randomize
-              </button>
-              <button className="btn  btn-warning btn-outline btn-sm" onClick={handleResetOrder}>
-                Reset
-              </button>
-            </div>
+            {/* Hatch toggle all button */}
             <div className="bg-slate-700 flex flex-col gap-3 text-center p-2 rounded">
               <h3>Open/Close hatches</h3>
               <button className="btn btn-warning btn-outline btn-sm" onClick={handleToggleAll}>
@@ -236,9 +240,7 @@ const EditCalendarPage = () => {
       </section>
 
       {/* Preview */}
-      <section id="preview">
-        <Calendar title={data.title} backgroundUrl={data.backgroundUrl} hatches={data.hatches} toggleHatch={toggleHatch} />
-      </section>
+      <section id="preview">{calendarData && <Calendar title={changes.title || calendarData.title} backgroundUrl={calendarData.backgroundUrl} hatches={calendarData.hatches} toggleHatch={toggleHatch} />}</section>
     </main>
   );
 };
