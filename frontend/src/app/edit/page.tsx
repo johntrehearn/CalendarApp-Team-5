@@ -220,7 +220,7 @@ const EditCalendarPage = () => {
           <div className="bg-slate-500 p-3 flex flex-col gap-3 rounded">
             <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900" onChange={handleBgChange} />
             <button className="btn btn-warning btn-outline btn-sm" onClick={handleResetBg}>
-              Undo
+              Reset
             </button>
           </div>
         </div>
@@ -246,7 +246,6 @@ const EditCalendarPage = () => {
                   <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900" onChange={handleHatchChange} />
                 </div>
               ))}
-
               <button className="btn btn-warning btn-outline btn-sm" onClick={handleResetHatch}>
                 Reset
               </button>
