@@ -181,7 +181,9 @@ const EditCalendarPage = () => {
     isOpen: boolean;
   };
   const handleSubmit = () => {
-    console.log('Changes: ', changes);
+    const { backgroundUrl, ...dataForBackend } = changes;
+    dataForBackend.hatches.filter((hatch) => hatch.imageFile).map((hatch) => ({ num: hatch.num, imageFile: hatch.imageFile }));
+    console.log('Changes: ', dataForBackend);
   };
 
   return (
