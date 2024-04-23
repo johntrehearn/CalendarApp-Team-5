@@ -3,7 +3,7 @@ import { FcCancel } from "react-icons/fc";
 function PaymentDecline() {
   return (
     <>
-      <div className="min-h-screen flex justify-center  clr-accent">
+      <div className="min-h-screen flex justify-center  bg-clr-accent ">
         <div className="card w-96 h-80 mt-40 glass ">
           <figure>
             <FcCancel size={100} />
@@ -26,7 +26,9 @@ function PaymentDecline() {
               <span>Oh NO! Payment failed </span>
             </div>
             <div className="card-actions justify-end">
-              <button className="btn bg-accent ">Try Again</button>
+              <button className="btn bg-[#463AA2] text-white ">
+                Try Again
+              </button>
             </div>
           </div>
         </div>
