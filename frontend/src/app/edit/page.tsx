@@ -181,8 +181,13 @@ const EditCalendarPage = () => {
     isOpen: boolean;
   };
   const handleSubmit = () => {
-    const { backgroundUrl, ...dataForBackend } = changes;
-    dataForBackend.hatches.filter((hatch) => hatch.imageFile).map((hatch) => ({ num: hatch.num, imageFile: hatch.imageFile }));
+    const dataForBackend = {
+      ...changes,
+      hatches: changes.hatches.filter((hatch) => hatch.imageFile).map((hatch) => ({ num: hatch.num, imageFile: hatch.imageFile })),
+    };
+    if ('backgroundUrl' in dataForBackend) {
+      delete dataForBackend.backgroundUrl;
+    }
     console.log('Changes: ', dataForBackend);
   };
 
