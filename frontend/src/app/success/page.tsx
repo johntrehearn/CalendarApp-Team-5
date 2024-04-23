@@ -6,7 +6,7 @@ import { FcCheckmark } from "react-icons/fc";
 function PaymentSuccessful() {
   return (
     <>
-      <div className=" min-h-screen flex justify-center success-card">
+      <div className=" min-h-screen flex justify-center success-card bg">
         <div className="card w-96 h-80 mt-40 glass ">
           <figure>
             <FcCheckmark size={100} />
@@ -31,7 +31,9 @@ function PaymentSuccessful() {
             </div>
             <div className="card-actions justify-end">
               <Link href="/">
-                <button className="btn  bg-accent">Go To Home</button>
+                <button className="btn  bg-[#463AA2] text-white">
+                  Go To Home
+                </button>
               </Link>
             </div>
           </div>
