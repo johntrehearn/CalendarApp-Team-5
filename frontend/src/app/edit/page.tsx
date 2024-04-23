@@ -104,9 +104,12 @@ const EditCalendarPage = () => {
   // The number corresponds to hatch.num and NOT the index of the array
   const [currentHatch, setCurrentHatch] = useState(1);
   // Carousel navigation sets the current hatch
-  const handleCarouselNav = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let num = Number(event.target.value);
-    setCurrentHatch(num);
+  const handleCarouselNav = (direction: 'prev' | 'next') => {
+    if (direction === 'prev') {
+      setCurrentHatch((prevState) => (prevState === 1 ? 24 : prevState - 1));
+    } else {
+      setCurrentHatch((prevState) => (prevState === 24 ? 1 : prevState + 1));
+    }
   };
   // Set the image file and url for the current hatch in the state
   const handleHatchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -228,7 +231,13 @@ const EditCalendarPage = () => {
           <div className="bg-slate-500 p-3 flex flex-col gap-3 rounded">
             {/* Carousel navigation */}
             <div className="flex items-center justify-between gap-1">
-              <input type="number" value={currentHatch} min="1" max="24" className="input input-bordered w-full max-w-xs text-stone-900 bg-white" onChange={handleCarouselNav} />
+              <button className="btn btn-warning btn-sm" onClick={() => handleCarouselNav('prev')}>
+                &larr; prev
+              </button>
+              <p>{currentHatch}</p>
+              <button className="btn btn-warning btn-sm" onClick={() => handleCarouselNav('next')}>
+                next &rarr;
+              </button>
             </div>
             {/* Carousel items */}
             <div className="bg-slate-700 flex flex-col gap-3 text-center p-2 rounded">
