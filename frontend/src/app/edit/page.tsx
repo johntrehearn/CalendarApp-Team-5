@@ -47,7 +47,6 @@ const EditCalendarPage = () => {
       { num: 24, imageUrl: 'https://images.pexels.com/photos/357141/pexels-photo-357141.jpeg', isOpen: false },
     ],
   };
-  // const fetchedCalData = null;
 
   // State for the incoming calendar data
   const [calendarData, setCalendarData] = useState<{
@@ -61,8 +60,10 @@ const EditCalendarPage = () => {
     title?: string;
     backgroundFile?: File | null;
     backgroundUrl?: string;
-    hatches?: { num: number; imageFile: File | null }[];
-  }>({});
+    hatches: { num: number; imageFile: File | null; imageUrl: string; isOpen: boolean }[];
+  }>({
+    hatches: calendarData?.hatches.map((hatch) => ({ num: hatch.num, imageFile: null, imageUrl: hatch.imageUrl, isOpen: true })) ?? [],
+  });
 
   // SET TITLE
   // This function updates the calendar title in the state
@@ -103,55 +104,60 @@ const EditCalendarPage = () => {
   // The number corresponds to hatch.num and NOT the index of the array
   const [currentHatch, setCurrentHatch] = useState(1);
   // Carousel navigation sets the current hatch
-  const handleCarouselNav = (direction: 'prev' | 'next') => {
-    if (direction === 'prev') {
-      setCurrentHatch((prevState) => (prevState === 1 ? 24 : prevState - 1));
-    } else {
-      setCurrentHatch((prevState) => (prevState === 24 ? 1 : prevState + 1));
-    }
+  const handleCarouselNav = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let num = Number(event.target.value);
+    setCurrentHatch(num);
   };
   // Set the image file and url for the current hatch in the state
   const handleHatchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       if (isSafeImageType(file.type)) {
-        setChanges({ ...changes, hatches: [{ num: currentHatch, imageFile: file }] });
-        // const updatedHatches = calendarData?.hatches.map((hatch) => {
-        //   if (hatch.num === currentHatch) {
-        //     hatch.imageFile = file;
-        //     hatch.imageUrl = getFileUrl(file);
-        //   }
-        //   return hatch;
-        // });
-        // setData({ ...data, hatches: updatedHatches });
+        const updatedHatches = changes.hatches.map((hatch) => {
+          if (hatch.num === currentHatch) {
+            return { ...hatch, imageFile: file, imageUrl: getFileUrl(file) };
+          }
+          return hatch;
+        });
+        setChanges({ ...changes, hatches: updatedHatches });
       } else {
         alert('Please upload an image!');
       }
     }
   };
+  // Reset hatch image file and url
+  const handleResetHatch = () => {
+    const updatedHatches = changes.hatches.map((hatch) => {
+      if (hatch.num === currentHatch) {
+        return { ...hatch, imageFile: null, imageUrl: calendarData?.hatches.find((h) => h.num === currentHatch)?.imageUrl ?? '' };
+      }
+      return hatch;
+    });
+    setChanges({ ...changes, hatches: updatedHatches });
+  };
   // This toggles isOpen for the hatch with the given number
   // and updates the state accordingly
   // The hatches are open by default, and there's no restriction here
   const toggleHatch = (num: number) => {
-    if (!calendarData) return;
-    const updatedHatches = calendarData?.hatches.map((hatch) => {
+    if (!changes) return;
+    const updatedHatches = changes?.hatches.map((hatch) => {
       if (hatch.num === num) {
         hatch.isOpen = !hatch.isOpen;
       }
       return hatch;
     });
-    setCalendarData({ ...calendarData, hatches: updatedHatches });
+    setChanges({ ...changes, hatches: updatedHatches });
   };
 
   // Toggle all hatches open/closed
   const handleToggleAll = () => {
-    if (!calendarData) return;
-    const toggleCriteria = !calendarData.hatches[0].isOpen;
-    const updatedHatches = calendarData.hatches.map((hatch) => {
+    if (!changes) return;
+    const toggleCriteria = !changes.hatches[0].isOpen;
+    const updatedHatches = changes.hatches.map((hatch) => {
       hatch.isOpen = toggleCriteria;
       return hatch;
     });
-    setCalendarData({ ...calendarData, hatches: updatedHatches });
+    setChanges({ ...changes, hatches: updatedHatches });
   };
 
   // SUBMIT
@@ -176,18 +182,6 @@ const EditCalendarPage = () => {
   };
   const handleSubmit = () => {
     console.log('Changes: ', changes);
-
-    /*
-    // Log data state for testing purposes (data state is for the page, not for backend)
-    console.log('Data state: ', data);
-    // Build the data for the backend
-    const calendar: CalendarForBackend = { title: data.title, backgroundFile: data.backgroundFile, backgroundUrl: '', hatches: [] };
-    const hatches = data.hatches.map((hatch) => ({ num: hatch.num, imageFile: hatch.imageFile, imageUrl: '', isOpen: false }));
-    calendar.hatches = [...hatches];
-    const dataForBackend: DataForBackend = { calendar1: calendar }; // calendar1 is hardcoded for now!!!
-    // Log data for the backend for testing purposes
-    console.log('Data for backend: ', dataForBackend);
-    */
   };
 
   return (
@@ -227,22 +221,20 @@ const EditCalendarPage = () => {
           <div className="bg-slate-500 p-3 flex flex-col gap-3 rounded">
             {/* Carousel navigation */}
             <div className="flex items-center justify-between gap-1">
-              <button className="btn btn-warning btn-sm" onClick={() => handleCarouselNav('prev')}>
-                &larr; prev
-              </button>
-              <p>{currentHatch}</p>
-              <button className="btn btn-warning btn-sm" onClick={() => handleCarouselNav('next')}>
-                next &rarr;
-              </button>
+              <input type="number" value={currentHatch} min="1" max="24" className="input input-bordered w-full max-w-xs text-stone-900 bg-white" onChange={handleCarouselNav} />
             </div>
             {/* Carousel items */}
             <div>
-              {calendarData &&
-                calendarData.hatches.map((hatch, index) => (
-                  <div key={hatch.num} className={hatch.num === currentHatch ? 'block' : 'hidden'}>
+              {changes?.hatches.map((hatch) => (
+                <div key={hatch.num} className={hatch.num === currentHatch ? 'block' : 'hidden'}>
+                  <div className="bg-slate-700 flex flex-col gap-3 text-center p-2 rounded">
                     <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900" onChange={handleHatchChange} />
+                    <button className="btn btn-warning btn-outline btn-sm" onClick={handleResetHatch}>
+                      Reset
+                    </button>
                   </div>
-                ))}
+                </div>
+              ))}
             </div>
             {/* Hatch toggle all button */}
             <div className="bg-slate-700 flex flex-col gap-3 text-center p-2 rounded">
@@ -260,7 +252,7 @@ const EditCalendarPage = () => {
       </section>
 
       {/* Preview */}
-      <section id="preview">{calendarData && <Calendar title={changes.title || calendarData.title} backgroundUrl={changes.backgroundUrl || calendarData.backgroundUrl} hatches={calendarData.hatches} toggleHatch={toggleHatch} />}</section>
+      <section id="preview">{calendarData && <Calendar title={changes.title ?? calendarData.title} backgroundUrl={changes.backgroundUrl ?? calendarData.backgroundUrl} hatches={changes.hatches} toggleHatch={toggleHatch} />}</section>
     </main>
   );
 };
