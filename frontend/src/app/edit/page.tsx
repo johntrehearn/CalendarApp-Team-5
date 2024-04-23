@@ -226,17 +226,16 @@ const EditCalendarPage = () => {
               <input type="number" value={currentHatch} min="1" max="24" className="input input-bordered w-full max-w-xs text-stone-900 bg-white" onChange={handleCarouselNav} />
             </div>
             {/* Carousel items */}
-            <div>
+            <div className="bg-slate-700 flex flex-col gap-3 text-center p-2 rounded">
               {changes?.hatches.map((hatch) => (
                 <div key={hatch.num} className={hatch.num === currentHatch ? 'block' : 'hidden'}>
-                  <div className="bg-slate-700 flex flex-col gap-3 text-center p-2 rounded">
-                    <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900" onChange={handleHatchChange} />
-                    <button className="btn btn-warning btn-outline btn-sm" onClick={handleResetHatch}>
-                      Reset
-                    </button>
-                  </div>
+                  <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900" onChange={handleHatchChange} />
                 </div>
               ))}
+
+              <button className="btn btn-warning btn-outline btn-sm" onClick={handleResetHatch}>
+                Reset
+              </button>
             </div>
             {/* Hatch toggle all button */}
             <div className="bg-slate-700 flex flex-col gap-3 text-center p-2 rounded">
