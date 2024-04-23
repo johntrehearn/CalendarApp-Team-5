@@ -67,6 +67,12 @@ const EditCalendarPage = () => {
   // SET TITLE
   // This function updates the calendar title in the state
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value === '' && changes.title) {
+      const updatedChanges = { ...changes };
+      delete updatedChanges.title;
+      setChanges({ ...updatedChanges });
+      return;
+    }
     setChanges({ ...changes, title: event.target.value });
   };
 
@@ -80,6 +86,15 @@ const EditCalendarPage = () => {
       } else {
         alert('Please upload an image!');
       }
+    }
+  };
+  // RESET BACKGROUND
+  const handleResetBg = () => {
+    if (changes.backgroundFile) {
+      const updatedChanges = { ...changes };
+      delete updatedChanges.backgroundFile;
+      delete updatedChanges.backgroundUrl;
+      setChanges({ ...updatedChanges });
     }
   };
 
@@ -198,7 +213,12 @@ const EditCalendarPage = () => {
         {/* Background */}
         <div>
           <h2 className="text-3xl">Background</h2>
-          <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900" onChange={handleBgChange} />
+          <div className="bg-slate-500 p-3 flex flex-col gap-3 rounded">
+            <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900" onChange={handleBgChange} />
+            <button className="btn btn-warning btn-outline btn-sm" onClick={handleResetBg}>
+              Undo
+            </button>
+          </div>
         </div>
         {/* Hatches */}
         <div>
@@ -240,7 +260,7 @@ const EditCalendarPage = () => {
       </section>
 
       {/* Preview */}
-      <section id="preview">{calendarData && <Calendar title={changes.title || calendarData.title} backgroundUrl={calendarData.backgroundUrl} hatches={calendarData.hatches} toggleHatch={toggleHatch} />}</section>
+      <section id="preview">{calendarData && <Calendar title={changes.title || calendarData.title} backgroundUrl={changes.backgroundUrl || calendarData.backgroundUrl} hatches={calendarData.hatches} toggleHatch={toggleHatch} />}</section>
     </main>
   );
 };
