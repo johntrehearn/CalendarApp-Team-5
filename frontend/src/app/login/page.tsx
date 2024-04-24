@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { fontTitle } from '../utilities/font';
 import { IoIosStar } from "react-icons/io";
 
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+
 const LoginPage = () => {
   const { login } = useAuthContext();
   const router = useRouter();
