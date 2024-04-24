@@ -15,6 +15,10 @@ declare global {
   }
 }
 
+// ------------------------------------------------------------------------------------------------------------------------------------
+
+// Function to verify the token
+
 const verifyToken = (req: Request, res: Response, next: NextFunction): void => {
   // Get token from the Authorization header
   const authHeader: string | undefined = req.headers.authorization;

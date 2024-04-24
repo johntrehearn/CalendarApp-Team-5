@@ -2,11 +2,6 @@ import express from "express";
 import axios from "axios";
 import sharp from "sharp";
 import stripePackage from "stripe";
-
-const stripe = new stripePackage(
-  "sk_test_51P32IZP7WrlB8etah6fHU1BNPacwJlR8XNFQ4qBIuRlPaYjQSMRXacQZ66A30vDYRQkOh2PPqLWmZc2YRiY3PgCS00FzGWVXgz"
-);
-
 import { sendEmail } from "../utils/confirmAccount";
 
 import image_generation from "../utils/generateImage";
@@ -17,9 +12,30 @@ import { Request, Response } from "express";
 import verifyToken from "../middlewares/verifyToken";
 import { JwtPayload } from "jsonwebtoken";
 
+const stripe = new stripePackage(
+  "sk_test_51P32IZP7WrlB8etah6fHU1BNPacwJlR8XNFQ4qBIuRlPaYjQSMRXacQZ66A30vDYRQkOh2PPqLWmZc2YRiY3PgCS00FzGWVXgz"
+);
+
+interface Calendar {
+  title: string;
+  backgroundFile: string; // Change this to the correct type for your background file
+  backgroundUrl: string;
+  hatches: Array<{
+    num: number;
+    imageFile: string; // Change this to the correct type for your image file
+    imageUrl: string;
+    isOpen: boolean;
+  }>;
+}
+
+let calendars: { [key: string]: Calendar };
+
+//-----------------------------------------------------------------------------------------------------------------------------------
+
 const router = express.Router();
 
-// Route for user registration using Firebase Auth and Realtime Database
+// Route for user registration using Firebase Auth and Realtime Database and Firestore  (with email verification)
+
 router.post("/register", async (req, res) => {
   try {
     const { email, password, displayName, otherDetails, status } = req.body;
@@ -35,6 +51,7 @@ router.post("/register", async (req, res) => {
       password,
       displayName,
     });
+
     // Store additional user details in Realtime Database
     await admin
       .database()
@@ -47,23 +64,28 @@ router.post("/register", async (req, res) => {
       });
 
     // Store additional user details in Firestore
-    const calendar = {
-      title: "Advent Calendar",
-      backgroundFile: {
-        /* File object */
-      },
-      hatches: Array.from({ length: 24 }, (_, i) => ({
-        num: i + 1,
-        imageFile: null,
-        isOpen: false,
-      })),
-    };
+    calendars = {};
+    for (let calendarNumber = 1; calendarNumber <= 3; calendarNumber++) {
+      const calendar = {
+        title: `Advent Calendar ${calendarNumber}`,
+        backgroundFile: "Your background file here",
+        backgroundUrl: "",
+        hatches: Array.from({ length: 24 }, (_, i) => ({
+          num: i + 1,
+          imageFile: "Your image file here",
+          imageUrl: "",
+          isOpen: false,
+        })),
+      };
+
+      calendars[`calendar${calendarNumber}`] = calendar;
+    }
 
     await admin
       .firestore()
       .collection("users")
       .doc(userRecord.uid)
-      .set(calendar);
+      .set({ calendars });
 
     // Send welcome email
     // const emailSubject = "Welcome to our platform!";
