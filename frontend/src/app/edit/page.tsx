@@ -8,7 +8,7 @@ import { getFileUrl, isSafeImageType } from '../utilities/helpers';
 
 // EDIT CALENDAR PAGE
 const EditCalendarPage = () => {
-  // For now, we'll use a hardcoded object or null for the fetched data
+  // For now, we'll use a hardcoded object for the fetched data
   const fetchedCalData = {
     title: 'Advent Calendar',
     backgroundUrl: 'https://images.pexels.com/photos/18512842/pexels-photo-18512842/free-photo-of-autumn-forest-at-night.jpeg',
@@ -60,6 +60,7 @@ const EditCalendarPage = () => {
   // SET TITLE
   // This function updates the calendar title in the state
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // If the title is empty, remove the title key from the changes object
     if (event.target.value === '' && changes.title) {
       const updatedChanges = { ...changes };
       delete updatedChanges.title;
@@ -81,6 +82,7 @@ const EditCalendarPage = () => {
       }
     }
   };
+
   // RESET BACKGROUND
   const handleResetBg = () => {
     if (changes.backgroundFile) {
@@ -103,6 +105,7 @@ const EditCalendarPage = () => {
       setCurrentHatch((prevState) => (prevState === 24 ? 1 : prevState + 1));
     }
   };
+
   // Set the image file and url for the current hatch in the state
   const handleHatchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -120,6 +123,7 @@ const EditCalendarPage = () => {
       }
     }
   };
+
   // Reset hatch image file and url
   const handleResetHatch = () => {
     const updatedHatches = changes.hatches.map((hatch) => {
@@ -130,6 +134,7 @@ const EditCalendarPage = () => {
     });
     setChanges({ ...changes, hatches: updatedHatches });
   };
+
   // This toggles isOpen for the hatch with the given number
   // and updates the state accordingly
   // The hatches are open by default, and there's no restriction here
@@ -177,7 +182,7 @@ const EditCalendarPage = () => {
 
   return (
     <main className="grid md:grid-cols-[300px_1fr] min-h-screen">
-      {/* View navigation */}
+      {/* View navigation on small screens */}
       <div className="md:hidden flex flex-col gap-3 w-max fixed bottom-5 right-5 z-20">
         <a href="#settings" className="btn btn-sm btn-accent text-lg">
           <FaArrowUpLong />
@@ -251,6 +256,7 @@ const EditCalendarPage = () => {
       </section>
 
       {/* Preview */}
+      {/* If there's no change, show the original data */}
       <section id="preview">{calendarData && <Calendar title={changes.title ?? calendarData.title} backgroundUrl={changes.backgroundUrl ?? calendarData.backgroundUrl} hatches={changes.hatches} toggleHatch={toggleHatch} />}</section>
     </main>
   );
