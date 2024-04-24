@@ -191,7 +191,12 @@ const EditCalendarPage = () => {
     if ('backgroundUrl' in dataForBackend) {
       delete dataForBackend.backgroundUrl;
     }
-    console.log('Changes: ', dataForBackend);
+    if (dataForBackend.hatches.length === 0) {
+      const { hatches, ...dataWithoutHatches } = dataForBackend;
+      console.log('Changes: ', dataWithoutHatches);
+    } else {
+      console.log('Changes: ', dataForBackend);
+    }
   };
 
   return (
