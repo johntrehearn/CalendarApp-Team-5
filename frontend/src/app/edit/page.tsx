@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Calendar from '@/components/Calendar';
 import { FaEdit } from 'react-icons/fa';
 import { FaArrowUpLong, FaArrowDownLong, FaCalendarDays } from 'react-icons/fa6';
+import Link from 'next/link';
 
 // HELPER FUNCTIONS
 // Extract url string from File object
@@ -167,22 +168,6 @@ const EditCalendarPage = () => {
   // This function logs the current state of the data state
   // and prepares the data for the backend
   // It will be extended with a POST request, a message? and a redirect to the My Calendars page
-  interface DataForBackend {
-    // The calendar reference (calendar1) is hard coded for now, but it should be dynamic in the future
-    calendar1: CalendarForBackend;
-  }
-  interface CalendarForBackend {
-    title: string;
-    backgroundFile: File | null;
-    backgroundUrl: string;
-    hatches: HatchForBackend[];
-  }
-  type HatchForBackend = {
-    num: number;
-    imageFile: File | null;
-    imageUrl: string;
-    isOpen: boolean;
-  };
   const handleSubmit = () => {
     const dataForBackend = {
       ...changes,
@@ -268,6 +253,10 @@ const EditCalendarPage = () => {
         <button className="btn" onClick={handleSubmit}>
           Submit
         </button>
+        {/* Cancel */}
+        <Link className="btn btn-outline text-white" href="/calendars">
+          Cancel
+        </Link>
       </section>
 
       {/* Preview */}
