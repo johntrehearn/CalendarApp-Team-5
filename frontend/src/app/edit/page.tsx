@@ -4,16 +4,7 @@ import Calendar from '@/components/Calendar';
 import { FaEdit } from 'react-icons/fa';
 import { FaArrowUpLong, FaArrowDownLong, FaCalendarDays } from 'react-icons/fa6';
 import Link from 'next/link';
-
-// HELPER FUNCTIONS
-// Extract url string from File object
-const getFileUrl = (file: File) => URL.createObjectURL(file);
-
-// Check if the file type is a safe image
-const isSafeImageType = (fileType: string) => {
-  const safeImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp'];
-  return safeImageTypes.includes(fileType);
-};
+import { getFileUrl, isSafeImageType } from '../utilities/helpers';
 
 // EDIT CALENDAR PAGE
 const EditCalendarPage = () => {

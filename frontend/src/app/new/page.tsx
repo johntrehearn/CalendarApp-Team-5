@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Calendar from '@/components/Calendar';
 import { FaEdit } from 'react-icons/fa';
 import { FaArrowUpLong, FaArrowDownLong, FaCalendarDays } from 'react-icons/fa6';
+import { getFileUrl, isSafeImageType } from '../utilities/helpers';
 
 // This type is for the overall state of the New Calendar page
 // It will be used to pick necessary data for the Calendar component (preview)
@@ -18,16 +19,6 @@ type HatchType = {
   imageFile: File | null;
   imageUrl: string | null;
   isOpen: boolean;
-};
-
-// HELPER FUNCTIONS
-// Extract url string from File object
-const getFileUrl = (file: File) => URL.createObjectURL(file);
-
-// Check if the file type is a safe image
-const isSafeImageType = (fileType: string) => {
-  const safeImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp'];
-  return safeImageTypes.includes(fileType);
 };
 
 // NEW CALENDAR PAGE
