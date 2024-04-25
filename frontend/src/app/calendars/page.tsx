@@ -117,7 +117,7 @@ const CalendarsPage = () => {
         <>
           <div className="flex flex-wrap gap-5 justify-center">
             {calendarsData.map((calendar) => (
-              <CalendarCard key={calendar.id} id={calendar.id} title={calendar.title} imageUrl={calendar.backgroundUrl} handleAction={handleAction} />
+              <CalendarCard key={calendar.id} id={calendar.id} title={calendar.title} backgroundUrl={calendar.backgroundUrl} handleAction={handleAction} />
             ))}
           </div>
 
