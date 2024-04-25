@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthContext } from '@/contexts/AuthContext';
-import CalendarCard from '../../components/CalendarCard'
+import CalendarCard from '../../components/CalendarCard';
 
 type Props = {};
 
@@ -12,16 +12,16 @@ const CalendarsPage = (props: Props) => {
   const { isLoggedIn } = useAuthContext();
 
   // Redirect to the homepage if the user is not logged in
-  useEffect(() => {
-    if (!isLoggedIn) {
-      router.replace('/');
-    }
-  }, [isLoggedIn, router]);
+  // useEffect(() => {
+  //   if (!isLoggedIn) {
+  //     router.replace('/');
+  //   }
+  // }, [isLoggedIn, router]);
 
   // Render nothing if the user is not logged in
-  if (!isLoggedIn) {
-    return null;
-  }
+  // if (!isLoggedIn) {
+  //   return null;
+  // }
 
   // Render the content of page if the user is logged in
   return (
@@ -29,8 +29,7 @@ const CalendarsPage = (props: Props) => {
       <div>CalendarsPage goes here</div>
       <CalendarCard />
     </>
-  )
-
+  );
 };
 
 export default CalendarsPage;
