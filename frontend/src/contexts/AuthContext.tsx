@@ -11,6 +11,7 @@ import {
 
 // Interface for the AuthContext
 interface AuthContextType {
+  uid: string | null;
   isLoggedIn: boolean;
   login: (idToken: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -27,6 +28,7 @@ interface AuthProviderProps {
 // Provider for AuthContext
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [uid, setUid] = useState<string | null>(null);
 
   const login = useCallback(async (idToken: string) => {
     // Send a POST request to the backend with the ID token
@@ -42,6 +44,11 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (response.ok) {
       // If the login was successful, set isLoggedIn to true
       setIsLoggedIn(true);
+
+      // Assuming the response includes the uid
+      const data = await response.json();
+      setUid(data.user.uid);
+      console.log("Logged in as:", data.user.uid);
     } else {
       // If the login failed, show an error message
       const data = await response.json();
@@ -62,6 +69,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (response.ok) {
       // If the logout was successful, set isLoggedIn to false
       setIsLoggedIn(false);
+      setUid(null);
     } else {
       // If the logout failed, show an error message
       const data = await response.json();
@@ -72,6 +80,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Construct and memoize the context value
   const authContextValue = useMemo(() => {
     return {
+      uid,
       isLoggedIn,
       login,
       logout,
