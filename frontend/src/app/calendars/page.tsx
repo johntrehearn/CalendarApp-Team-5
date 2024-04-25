@@ -44,12 +44,17 @@ const CalendarsPage = () => {
   >(calendars);
 
   // State to store the selected card
-  const [selectedCard, setSelectedCard] = useState('');
+  const [selectedCard, setSelectedCard] = useState<{
+    id: string;
+    title: string;
+    backgroundUrl: string;
+  }>({ id: '', title: '', backgroundUrl: '' });
 
   // When a card button is clicked, handleAction sets the selected card and performs the chosen action
   const handleAction = (id: string, action: string) => {
     // Setting the selected card
-    setSelectedCard(id);
+    const selected = calendarsData?.find((cal) => cal.id === id);
+    setSelectedCard(selected!);
 
     // Navigate to the single calendar page and sending the cal id
     if (action === 'show') {
@@ -80,13 +85,7 @@ const CalendarsPage = () => {
   };
 
   const deleteCalendar = () => {
-    console.log(`Deleting calendar with id: ${selectedCard}`);
-  };
-
-  // Get the title of the selected calendar for the delete modal
-  const getSelectedCalTitle = () => {
-    const selectedCal = calendarsData?.find((cal) => cal.id === selectedCard);
-    return selectedCal?.title;
+    console.log(`Deleting calendar with id: ${selectedCard.id}`);
   };
 
   // Render nothing if the user is not logged in
@@ -130,7 +129,7 @@ const CalendarsPage = () => {
       {/* Delete Modal */}
       <dialog id="delete_modal" className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg">{`Do you want to delete this calendar: ${getSelectedCalTitle()}?`}</h3>
+          <h3 className="font-bold text-lg">{`Do you want to delete this calendar: ${selectedCard.title}?`}</h3>
           <p className="py-4">This action can't be reversed.</p>
           <div className="modal-action">
             <form method="dialog" className="flex gap-5">
