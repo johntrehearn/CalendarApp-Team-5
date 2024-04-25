@@ -38,7 +38,7 @@ const router = express.Router();
 
 router.post("/register", async (req, res) => {
   try {
-    const { email, password, displayName, otherDetails, status } = req.body;
+    const { email, password, displayName, status } = req.body;
 
     // Check if status is not "free"
     if (status && status !== "free") {
@@ -59,7 +59,6 @@ router.post("/register", async (req, res) => {
       .set({
         email: userRecord.email,
         displayName: userRecord.displayName,
-        otherDetails: otherDetails,
         status: "free",
       });
 

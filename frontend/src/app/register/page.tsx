@@ -5,18 +5,42 @@ import { useAuthContext } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { fontTitle } from '../utilities/font';
 import { IoIosStar } from "react-icons/io";
+import { useState } from 'react';
+import axios from 'axios';
 
 
 const RegisterPage = () => {
+
   const { login } = useAuthContext();
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [accountCreated, setAccountCreated] = useState(false);
 
-  // !!! handleSubmit function is for testing purposes only!
-  // For now it's not real authentication, just a mock function.
-  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSubmit = async (e:React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    login();
-    router.replace('/calendars');
+    console.log(email, password, displayName);
+    if (!isRegistering) {
+      setIsRegistering(true);
+      try {
+        // Send POST request to backend for user registration
+        await axios.post("http://localhost:8080/auth/register", {
+          email,
+          password,
+          displayName,
+          status: "free",
+        });
+
+        // Set accountCreated to true upon successful registration
+        setAccountCreated(true);
+      } catch (error: any) {
+        setErrorMessage(error.response.data.error);
+        setIsRegistering(false);
+      }
+    }
   };
 
   return (
@@ -30,17 +54,30 @@ const RegisterPage = () => {
           </div>
 
           <form className="flex flex-col items-center gap-5">
-            <input type="text" placeholder="Name" className="input input-bordered w-full max-w-xs bg-white"></input>
-            <input type="text" placeholder="Email" className="input input-bordered w-full max-w-xs bg-white"></input>
-            <input type="password" placeholder="Password" className="input input-bordered w-full max-w-xs bg-white"></input>
-            <input type="password" placeholder="Confirm Password" className="input input-bordered w-full max-w-xs  bg-white"></input>
+            <input type="text" placeholder="Name" value={displayName} onChange={(e) => {
+                      setDisplayName(e.target.value);
+                    }} className="input input-bordered w-full max-w-xs bg-white"></input>
+            <input type="text" placeholder="Email" value={email} onChange={(e) => {
+                      setEmail(e.target.value);
+                    }} className="input input-bordered w-full max-w-xs bg-white"></input>
+            <input type="password" placeholder="Password" onChange={(e) => {
+                      setPassword(e.target.value);
+                    }} value={password} className="input input-bordered w-full max-w-xs bg-white"></input>
             <button onClick={handleSubmit} type="submit" className="bg-[#463AA2] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ">Submit</button>
           </form>
         </div>
       </div>
+      <div>
+        {accountCreated && <div className="text-green-500">Account created successfully!</div>}
+      </div>
     </div >
-  );
+  );    
 };
+
+
+
+
+
 
 export default RegisterPage;
 
