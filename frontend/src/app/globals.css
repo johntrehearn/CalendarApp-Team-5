@@ -45,6 +45,7 @@ body {
 /* Restrict the width of the page content */
 /* Also center content */
 .content-width {
+  width: 100%;
   max-width: 1500px;
   margin: 0 auto;
   padding: 0 2.5rem;
