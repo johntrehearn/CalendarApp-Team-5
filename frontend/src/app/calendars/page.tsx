@@ -68,7 +68,7 @@ const CalendarsPage = () => {
 
     // Navigate to the edit page - also needs id???
     if (action === 'edit') {
-      router.push('/edit');
+      router.push(`/edit/${id}`);
     }
 
     // For now, just log which calendar is being shared
@@ -102,7 +102,7 @@ const CalendarsPage = () => {
       {!calendarsData && (
         <div role="alert" className="alert mx-auto">
           <BsInfoCircle className="text-primary text-xl" />
-          <span>You don't have any calendars yet.</span>
+          <span>You don&apos;t have any calendars yet.</span>
           <div>
             <Link href="/new" className="btn btn-sm btn-primary">
               Create
@@ -130,7 +130,7 @@ const CalendarsPage = () => {
       <dialog id="delete_modal" className="modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg">{`Do you want to delete this calendar: ${selectedCard.title}?`}</h3>
-          <p className="py-4">This action can't be reversed.</p>
+          <p className="py-4">This action can&apos;t be reversed.</p>
           <div className="modal-action">
             <form method="dialog" className="flex gap-5">
               <button className="btn btn-error" onClick={deleteCalendar}>
