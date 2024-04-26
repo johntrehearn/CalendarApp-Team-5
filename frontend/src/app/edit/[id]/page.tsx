@@ -4,7 +4,7 @@ import Calendar from '@/components/Calendar';
 import { FaEdit } from 'react-icons/fa';
 import { FaArrowUpLong, FaArrowDownLong, FaCalendarDays } from 'react-icons/fa6';
 import Link from 'next/link';
-import { getFileUrl, isSafeImageType } from '../../utilities/helpers';
+import { getFileUrl, isSafeImageType } from '@/app/utilities/helpers';
 
 // EDIT CALENDAR PAGE
 const EditCalendarPage = () => {
