@@ -1,9 +1,17 @@
-'use client';
-import React, { useState } from 'react';
-import Calendar from '@/components/Calendar';
-import { FaEdit } from 'react-icons/fa';
-import { FaArrowUpLong, FaArrowDownLong, FaCalendarDays } from 'react-icons/fa6';
-import { getFileUrl, isSafeImageType } from '../utilities/helpers';
+"use client";
+import React, { useState } from "react";
+import Calendar from "@/components/Calendar";
+import { FaEdit } from "react-icons/fa";
+import {
+  FaArrowUpLong,
+  FaArrowDownLong,
+  FaCalendarDays,
+} from "react-icons/fa6";
+import { getFileUrl, isSafeImageType } from "../utilities/helpers";
+import { useAuthContext } from "@/contexts/AuthContext";
+
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from "@/firebase/firebase";
 
 // This type is for the overall state of the New Calendar page
 // It will be used to pick necessary data for the Calendar component (preview)
@@ -23,13 +31,14 @@ type HatchType = {
 
 // NEW CALENDAR PAGE
 const NewCalendarPage = () => {
+  const { isLoggedIn, uid } = useAuthContext();
   // DATA STATE
   // It uses DataType defined above
   // Default values are mostly null or empty arrays so the user can fill them in
   // The hatches array is initialized with 24 (hardcoded) elements for now
   // and they are open by default for easier viewing
   const [data, setData] = useState<DataType>({
-    title: '',
+    title: "",
     backgroundFile: null,
     backgroundUrl: null,
     hatches: new Array(24).fill(null).map((_, index) => ({
@@ -52,9 +61,13 @@ const NewCalendarPage = () => {
     const file = event.target.files?.[0];
     if (file) {
       if (isSafeImageType(file.type)) {
-        setData({ ...data, backgroundFile: file, backgroundUrl: getFileUrl(file) });
+        setData({
+          ...data,
+          backgroundFile: file,
+          backgroundUrl: getFileUrl(file),
+        });
       } else {
-        alert('Please upload an image!');
+        alert("Please upload an image!");
       }
     }
   };
@@ -64,8 +77,8 @@ const NewCalendarPage = () => {
   // The number corresponds to hatch.num and NOT the index of the array
   const [currentHatch, setCurrentHatch] = useState(1);
   // Carousel navigation sets the current hatch
-  const handleCarouselNav = (direction: 'prev' | 'next') => {
-    if (direction === 'prev') {
+  const handleCarouselNav = (direction: "prev" | "next") => {
+    if (direction === "prev") {
       setCurrentHatch((prevState) => (prevState === 1 ? 24 : prevState - 1));
     } else {
       setCurrentHatch((prevState) => (prevState === 24 ? 1 : prevState + 1));
@@ -85,7 +98,7 @@ const NewCalendarPage = () => {
         });
         setData({ ...data, hatches: updatedHatches });
       } else {
-        alert('Please upload an image!');
+        alert("Please upload an image!");
       }
     }
   };
@@ -139,19 +152,81 @@ const NewCalendarPage = () => {
   type HatchForBackend = {
     num: number;
     imageFile: File | null;
-    imageUrl: string;
+    imageUrl: string | null;
     isOpen: boolean;
   };
-  const handleSubmit = () => {
+
+  const handleSubmit = async () => {
     // Log data state for testing purposes (data state is for the page, not for backend)
-    console.log('Data state: ', data);
+    console.log("Data state: ", data);
+
     // Build the data for the backend
-    const calendar: CalendarForBackend = { title: data.title, backgroundFile: data.backgroundFile, backgroundUrl: '', hatches: [] };
-    const hatches = data.hatches.map((hatch) => ({ num: hatch.num, imageFile: hatch.imageFile, imageUrl: '', isOpen: false }));
+    const calendar: CalendarForBackend = {
+      title: data.title,
+      backgroundFile: data.backgroundFile,
+      backgroundUrl: "",
+      hatches: [],
+    };
+
+    // Upload the background image to Firebase Storage and get the download URL
+    if (data.backgroundFile) {
+      const bgStorageRef = ref(
+        storage,
+        `images/${uid}/${data.backgroundFile.name}`
+      );
+      await uploadBytesResumable(bgStorageRef, data.backgroundFile);
+      const bgUrl = await getDownloadURL(bgStorageRef);
+      calendar.backgroundUrl = bgUrl;
+    }
+
+    // Upload the hatch images to Firebase Storage and get the download URLs
+    const hatches = await Promise.all(
+      data.hatches.map(async (hatch) => {
+        if (hatch.imageFile) {
+          const hatchStorageRef = ref(
+            storage,
+            `images/${uid}/${hatch.imageFile.name}`
+          );
+          await uploadBytesResumable(hatchStorageRef, hatch.imageFile);
+          const hatchUrl = await getDownloadURL(hatchStorageRef);
+          return {
+            num: hatch.num,
+            imageFile: hatch.imageFile,
+            imageUrl: hatchUrl,
+            isOpen: false,
+          };
+        } else {
+          return hatch;
+        }
+      })
+    );
+
     calendar.hatches = [...hatches];
     const dataForBackend: DataForBackend = { calendar1: calendar }; // calendar1 is hardcoded for now!!!
     // Log data for the backend for testing purposes
-    console.log('Data for backend: ', dataForBackend);
+    console.log("Data for backend: ", dataForBackend);
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/calendar/addcalendar/${uid}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataForBackend),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to create calendar");
+      }
+
+      const responseData = await response.json();
+      console.log(responseData);
+    } catch (error) {
+      console.error("Error creating calendar:", error);
+    }
   };
 
   return (
@@ -168,16 +243,28 @@ const NewCalendarPage = () => {
         </a>
       </div>
       {/* Settings */}
-      <section id="settings" className="flex flex-col gap-12 max-w-[300px] mx-auto py-8 px-4 bg-base text-white">
+      <section
+        id="settings"
+        className="flex flex-col gap-12 max-w-[300px] mx-auto py-8 px-4 bg-base text-white"
+      >
         {/* Title */}
         <div>
           <h2 className="text-3xl">Title</h2>
-          <input type="text" placeholder="Enter calendar title" className="input input-bordered w-full max-w-xs text-stone-900 bg-white" onChange={handleTitleChange} />
+          <input
+            type="text"
+            placeholder="Enter calendar title"
+            className="input input-bordered w-full max-w-xs text-stone-900 bg-white"
+            onChange={handleTitleChange}
+          />
         </div>
         {/* Background */}
         <div>
           <h2 className="text-3xl">Background</h2>
-          <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900" onChange={handleBgChange} />
+          <input
+            type="file"
+            className="file-input file-input-bordered w-full max-w-xs text-stone-900"
+            onChange={handleBgChange}
+          />
         </div>
         {/* Hatches */}
         <div>
@@ -186,35 +273,57 @@ const NewCalendarPage = () => {
           <div className="bg-slate-500 p-3 flex flex-col gap-3 rounded">
             {/* Carousel navigation */}
             <div className="flex items-center justify-between gap-1">
-              <button className="btn btn-warning btn-sm" onClick={() => handleCarouselNav('prev')}>
+              <button
+                className="btn btn-warning btn-sm"
+                onClick={() => handleCarouselNav("prev")}
+              >
                 &larr; prev
               </button>
               <p>{currentHatch}</p>
-              <button className="btn btn-warning btn-sm" onClick={() => handleCarouselNav('next')}>
+              <button
+                className="btn btn-warning btn-sm"
+                onClick={() => handleCarouselNav("next")}
+              >
                 next &rarr;
               </button>
             </div>
             {/* Carousel items */}
             <div>
               {data.hatches.map((hatch, index) => (
-                <div key={hatch.num} className={hatch.num === currentHatch ? 'block' : 'hidden'}>
-                  <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900" onChange={handleHatchChange} />
+                <div
+                  key={hatch.num}
+                  className={hatch.num === currentHatch ? "block" : "hidden"}
+                >
+                  <input
+                    type="file"
+                    className="file-input file-input-bordered w-full max-w-xs text-stone-900"
+                    onChange={handleHatchChange}
+                  />
                 </div>
               ))}
             </div>
             {/* Hatch order buttons */}
             <div className="bg-slate-700 flex flex-col gap-3 text-center p-2 rounded">
               <h3>Hatch order</h3>
-              <button className="btn btn-warning btn-outline btn-sm" onClick={handleRandomOrder}>
+              <button
+                className="btn btn-warning btn-outline btn-sm"
+                onClick={handleRandomOrder}
+              >
                 Randomize
               </button>
-              <button className="btn  btn-warning btn-outline btn-sm" onClick={handleResetOrder}>
+              <button
+                className="btn  btn-warning btn-outline btn-sm"
+                onClick={handleResetOrder}
+              >
                 Reset
               </button>
             </div>
             <div className="bg-slate-700 flex flex-col gap-3 text-center p-2 rounded">
               <h3>Open/Close hatches</h3>
-              <button className="btn btn-warning btn-outline btn-sm" onClick={handleToggleAll}>
+              <button
+                className="btn btn-warning btn-outline btn-sm"
+                onClick={handleToggleAll}
+              >
                 Toggle
               </button>
             </div>
@@ -228,7 +337,12 @@ const NewCalendarPage = () => {
 
       {/* Preview */}
       <section id="preview">
-        <Calendar title={data.title} backgroundUrl={data.backgroundUrl} hatches={data.hatches} toggleHatch={toggleHatch} />
+        <Calendar
+          title={data.title}
+          backgroundUrl={data.backgroundUrl}
+          hatches={data.hatches}
+          toggleHatch={toggleHatch}
+        />
       </section>
     </main>
   );

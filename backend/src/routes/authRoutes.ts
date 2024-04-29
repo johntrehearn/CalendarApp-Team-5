@@ -63,28 +63,11 @@ router.post("/register", async (req, res) => {
       });
 
     // Store additional user details in Firestore
-    calendars = {};
-    for (let calendarNumber = 1; calendarNumber <= 3; calendarNumber++) {
-      const calendar = {
-        title: `Advent Calendar ${calendarNumber}`,
-        backgroundFile: "Your background file here",
-        backgroundUrl: "",
-        hatches: Array.from({ length: 24 }, (_, i) => ({
-          num: i + 1,
-          imageFile: "Your image file here",
-          imageUrl: "",
-          isOpen: false,
-        })),
-      };
-
-      calendars[`calendar${calendarNumber}`] = calendar;
-    }
-
     await admin
       .firestore()
       .collection("users")
       .doc(userRecord.uid)
-      .set({ calendars });
+      .set({ calendars: {} });
 
     // Send welcome email
     // const emailSubject = "Welcome to our platform!";
