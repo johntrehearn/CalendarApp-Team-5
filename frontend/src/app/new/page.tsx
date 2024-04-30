@@ -5,6 +5,7 @@ import { FaEdit } from 'react-icons/fa';
 import { FaArrowUpLong, FaArrowDownLong, FaCalendarDays } from 'react-icons/fa6';
 import { getFileUrl, isSafeImageType } from '../utilities/helpers';
 import { useAuthContext } from '@/contexts/AuthContext';
+import Link from 'next/link';
 
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/firebase/firebase';
@@ -291,6 +292,10 @@ const NewCalendarPage = () => {
         <button className="btn" onClick={handleSubmit}>
           Submit
         </button>
+        {/* Cancel */}
+        <Link className="btn btn-outline text-white" href="/calendars">
+          Cancel
+        </Link>
       </section>
 
       {/* Preview */}
