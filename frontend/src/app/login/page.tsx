@@ -26,8 +26,8 @@ const LoginPage = () => {
     const userCredential = await doSignInWithEmailAndPassword(email, password);
     const idToken = await userCredential.user.getIdToken();
 
-    // Call the login function with the ID token
-    login(idToken);
+    // Call the login function with the ID token and wait for it to complete
+    await login(idToken);
 
     // Redirect the user to the home page
     router.replace("/calendars");

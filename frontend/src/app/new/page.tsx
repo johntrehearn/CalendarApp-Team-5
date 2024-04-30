@@ -4,6 +4,10 @@ import Calendar from '@/components/Calendar';
 import { FaEdit } from 'react-icons/fa';
 import { FaArrowUpLong, FaArrowDownLong, FaCalendarDays } from 'react-icons/fa6';
 import { getFileUrl, isSafeImageType } from '../utilities/helpers';
+import { useAuthContext } from '@/contexts/AuthContext';
+
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { storage } from '@/firebase/firebase';
 
 // This type is for the overall state of the New Calendar page
 // It will be used to pick necessary data for the Calendar component (preview)
@@ -23,6 +27,7 @@ type HatchType = {
 
 // NEW CALENDAR PAGE
 const NewCalendarPage = () => {
+  const { isLoggedIn, uid } = useAuthContext();
   // DATA STATE
   // It uses DataType defined above
   // Default values are mostly null or empty arrays so the user can fill them in
@@ -52,7 +57,11 @@ const NewCalendarPage = () => {
     const file = event.target.files?.[0];
     if (file) {
       if (isSafeImageType(file.type)) {
-        setData({ ...data, backgroundFile: file, backgroundUrl: getFileUrl(file) });
+        setData({
+          ...data,
+          backgroundFile: file,
+          backgroundUrl: getFileUrl(file),
+        });
       } else {
         alert('Please upload an image!');
       }
@@ -139,19 +148,77 @@ const NewCalendarPage = () => {
   type HatchForBackend = {
     num: number;
     imageFile: File | null;
-    imageUrl: string;
+    imageUrl: string | null;
     isOpen: boolean;
   };
-  const handleSubmit = () => {
+
+  const handleSubmit = async () => {
     // Log data state for testing purposes (data state is for the page, not for backend)
     console.log('Data state: ', data);
+
     // Build the data for the backend
-    const calendar: CalendarForBackend = { title: data.title, backgroundFile: data.backgroundFile, backgroundUrl: '', hatches: [] };
-    const hatches = data.hatches.map((hatch) => ({ num: hatch.num, imageFile: hatch.imageFile, imageUrl: '', isOpen: false }));
+    const calendar: CalendarForBackend = {
+      title: data.title,
+      backgroundFile: data.backgroundFile,
+      backgroundUrl: '',
+      hatches: [],
+    };
+
+    // Upload the background image to Firebase Storage and get the download URL
+    if (data.backgroundFile) {
+      const bgStorageRef = ref(storage, `images/${uid}/${data.backgroundFile.name}`);
+      await uploadBytesResumable(bgStorageRef, data.backgroundFile);
+      const bgUrl = await getDownloadURL(bgStorageRef);
+      calendar.backgroundUrl = bgUrl;
+    }
+
+    // Upload the hatch images to Firebase Storage and get the download URLs
+    const hatches = await Promise.all(
+      data.hatches.map(async (hatch) => {
+        if (hatch.imageFile) {
+          const hatchStorageRef = ref(storage, `images/${uid}/${hatch.imageFile.name}`);
+          await uploadBytesResumable(hatchStorageRef, hatch.imageFile);
+          const hatchUrl = await getDownloadURL(hatchStorageRef);
+          return {
+            num: hatch.num,
+            imageFile: hatch.imageFile,
+            imageUrl: hatchUrl,
+            isOpen: false,
+          };
+        } else {
+          return {
+            num: hatch.num,
+            imageFile: null,
+            imageUrl: null,
+            isOpen: false,
+          };
+        }
+      })
+    );
+
     calendar.hatches = [...hatches];
     const dataForBackend: DataForBackend = { calendar1: calendar }; // calendar1 is hardcoded for now!!!
     // Log data for the backend for testing purposes
     console.log('Data for backend: ', dataForBackend);
+
+    try {
+      const response = await fetch(`http://localhost:8080/calendar/addcalendar/${uid}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dataForBackend),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create calendar');
+      }
+
+      const responseData = await response.json();
+      console.log(responseData);
+    } catch (error) {
+      console.error('Error creating calendar:', error);
+    }
   };
 
   return (

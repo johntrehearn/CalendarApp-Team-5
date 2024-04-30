@@ -13,6 +13,7 @@ import {
 interface AuthContextType {
   uid: string | null;
   isLoggedIn: boolean;
+  isLoading: boolean;
   login: (idToken: string) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -29,8 +30,10 @@ interface AuthProviderProps {
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [uid, setUid] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const login = useCallback(async (idToken: string) => {
+    setIsLoading(true);
     // Send a POST request to the backend with the ID token
     const response = await fetch("http://localhost:8080/auth/login", {
       method: "POST",
@@ -54,9 +57,11 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const data = await response.json();
       console.error("Failed to log in:", data.error);
     }
+    setIsLoading(false);
   }, []);
 
   const logout = useCallback(async () => {
+    setIsLoading(true);
     // Send a POST request to the backend to log out
     const response = await fetch("http://localhost:8080/auth/logout", {
       method: "POST",
@@ -75,6 +80,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const data = await response.json();
       console.error("Failed to log out:", data.error);
     }
+    setIsLoading(false);
   }, []);
 
   // Construct and memoize the context value
@@ -84,8 +90,9 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       isLoggedIn,
       login,
       logout,
+      isLoading,
     };
-  }, [isLoggedIn, login, logout]);
+  }, [isLoggedIn, login, logout, isLoading]);
 
   // Provide the context value to its children
   return (
@@ -96,7 +103,6 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 };
 
 // Custom Hook to use AuthContext
-// const useAuthContext = () => useContext(AuthContext);
 const useAuthContext = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
