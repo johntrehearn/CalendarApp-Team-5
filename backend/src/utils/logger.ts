@@ -1,5 +1,4 @@
-import winston from "winston";
-import { MongoDB } from "winston-mongodb";
+import winston from "winston"; import { MongoDB } from "winston-mongodb";
 import dotenv from "dotenv";
 
 dotenv.config();
