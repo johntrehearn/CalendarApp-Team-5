@@ -22,6 +22,37 @@ const SingleCalendarPage = () => {
   const { uid } = useAuthContext();
   const [calendarData, setCalendarData] = useState<CalendarData | null>(null);
 
+  const updateCalendar = async (
+    newCalendarId: string,
+    updatedCalendarData: CalendarData
+  ) => {
+    // Get the last part of the URL path, which should be the calendar ID
+
+    const urlParts = window.location.pathname.split("/");
+    const calendarId = urlParts[urlParts.length - 1];
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/calendar/updatecalendar/${uid}/${calendarId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedCalendarData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update calendar");
+      }
+
+      console.log("Calendar updated successfully");
+    } catch (error) {
+      console.error("Error updating calendar:", error);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       console.log(uid);
@@ -83,33 +114,35 @@ const SingleCalendarPage = () => {
     };
     setCalendarData(updatedCalendarData);
 
-    await updateCalendar("calendar1", updatedCalendarData);
-  };
+    // Get the last part of the URL path, which should be the calendar ID
+    const urlParts = window.location.pathname.split("/");
+    const calendarId = urlParts[urlParts.length - 1];
 
-  const updateCalendar = async (
-    calendarId: string,
-    updatedCalendarData: CalendarData
-  ) => {
+    // Update the specific hatch status on the server
     try {
       const response = await fetch(
-        `http://localhost:8080/calendar/${uid}/${calendarId}`,
+        `http://localhost:8080/calendar/updatehatch/${uid}/${calendarId}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(updatedCalendarData),
+          body: JSON.stringify({
+            hatch: updatedHatches.find((hatch) => hatch.num === hatchNum),
+          }),
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to update calendar");
+        throw new Error("Failed to update hatch status");
       }
 
-      console.log("Calendar updated successfully");
+      console.log("Hatch status updated successfully");
     } catch (error) {
-      console.error("Error updating calendar:", error);
+      console.error("Error updating hatch status:", error);
     }
+
+    await updateCalendar(calendarId, updatedCalendarData);
   };
 
   const handleShare = () => {

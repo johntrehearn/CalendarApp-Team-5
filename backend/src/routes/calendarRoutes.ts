@@ -109,6 +109,11 @@ router.post("/addcalendar/:uid", async (req, res) => {
     // Get the current number of calendars
     const currentCalendarCount = Object.keys(userData.calendars).length;
 
+    // change all isOpen to false no matter what the user submits
+    for (let i = 0; i < calendarData.calendar1.hatches.length; i++) {
+      calendarData.calendar1.hatches[i].isOpen = false;
+    }
+
     // Add the new calendar to the user's data
     userData.calendars = {
       ...userData.calendars,
@@ -156,6 +161,40 @@ router.put("/updatecalendar/:uid/:calendarId", async (req, res) => {
   } catch (error) {
     console.error("Error updating calendar:", error);
     res.status(500).json({ error: "Failed to update calendar" });
+  }
+});
+
+// Update hatch status of a specific calendar
+
+router.put("/updatehatch/:uid/:calendarId", async (req, res) => {
+  try {
+    const { uid, calendarId } = req.params;
+    const updatedHatch = req.body;
+
+    // Retrieve user's calendar data from Firestore
+    const userDoc = await admin.firestore().collection("users").doc(uid).get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const userData = userDoc.data();
+    const calendar = userData.calendars[calendarId];
+
+    if (!calendar) {
+      return res.status(404).json({ error: "Calendar not found" });
+    }
+
+    // Update the calendar
+    userData.calendars[calendarId].hatch = updatedHatch.hatch;
+
+    // Update the user's data in Firestore
+    await admin.firestore().collection("users").doc(uid).set(userData);
+
+    res.json({ message: "Hatch status updated successfully" });
+  } catch (error) {
+    console.error("Error updating hatch status:", error);
+    res.status(500).json({ error: "Failed to update hatch status" });
   }
 });
 
