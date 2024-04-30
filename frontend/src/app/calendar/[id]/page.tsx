@@ -22,13 +22,15 @@ const SingleCalendarPage = () => {
   const { uid } = useAuthContext();
   const [calendarData, setCalendarData] = useState<CalendarData | null>(null);
 
-  const updateCalendar = async (newCalendarId: string, updatedCalendarData: CalendarData) => {
+  const updateCalendar = async (
+    newCalendarId: string,
+    updatedCalendarData: CalendarData
+  ) => {
     // Get the last part of the URL path, which should be the calendar ID
-
 
     const urlParts = window.location.pathname.split("/");
     const calendarId = urlParts[urlParts.length - 1];
-  
+
     try {
       const response = await fetch(
         `http://localhost:8080/calendar/updatecalendar/${uid}/${calendarId}`,
@@ -40,11 +42,11 @@ const SingleCalendarPage = () => {
           body: JSON.stringify(updatedCalendarData),
         }
       );
-  
+
       if (!response.ok) {
         throw new Error("Failed to update calendar");
       }
-  
+
       console.log("Calendar updated successfully");
     } catch (error) {
       console.error("Error updating calendar:", error);
@@ -80,42 +82,42 @@ const SingleCalendarPage = () => {
 
   const toggleHatch = async (hatchNum: number) => {
     if (!calendarData) return;
-  
-    const currentDate = new Date("2021-12-01");
+
+    const currentDate = new Date();
     const currentMonth = currentDate.getMonth() + 1;
     const currentDay = currentDate.getDate();
-  
+
     const isDecember = currentMonth === 12;
     const isAdventDay = hatchNum <= currentDay && isDecember;
     const isPastDec24 = isDecember && currentDay > 24;
-  
+
     let canOpenHatch = false;
     if (isPastDec24 || isAdventDay) {
       canOpenHatch = true;
     }
-  
+
     if (!canOpenHatch) {
       alert("You can't open this hatch yet!");
       return;
     }
-  
+
     const updatedHatches = calendarData.hatches.map((hatch) => {
       if (hatch.num === hatchNum) {
         return { ...hatch, isOpen: !hatch.isOpen };
       }
       return hatch;
     });
-  
+
     const updatedCalendarData = {
       ...calendarData,
       hatches: updatedHatches,
     };
     setCalendarData(updatedCalendarData);
-  
+
     // Get the last part of the URL path, which should be the calendar ID
     const urlParts = window.location.pathname.split("/");
     const calendarId = urlParts[urlParts.length - 1];
-  
+
     // Update the specific hatch status on the server
     try {
       const response = await fetch(
@@ -125,22 +127,23 @@ const SingleCalendarPage = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ hatch: updatedHatches.find(hatch => hatch.num === hatchNum) }),
+          body: JSON.stringify({
+            hatch: updatedHatches.find((hatch) => hatch.num === hatchNum),
+          }),
         }
       );
-  
+
       if (!response.ok) {
         throw new Error("Failed to update hatch status");
       }
-  
+
       console.log("Hatch status updated successfully");
     } catch (error) {
       console.error("Error updating hatch status:", error);
     }
-  
+
     await updateCalendar(calendarId, updatedCalendarData);
   };
-  
 
   const handleShare = () => {
     console.log("Share button clicked");
