@@ -109,6 +109,11 @@ router.post("/addcalendar/:uid", async (req, res) => {
     // Get the current number of calendars
     const currentCalendarCount = Object.keys(userData.calendars).length;
 
+    // change all isOpen to false no matter what the user submits
+    for (let i = 0; i < calendarData.calendar1.hatches.length; i++) {
+      calendarData.calendar1.hatches[i].isOpen = false;
+    }
+
     // Add the new calendar to the user's data
     userData.calendars = {
       ...userData.calendars,
