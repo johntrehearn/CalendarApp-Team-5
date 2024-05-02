@@ -8,6 +8,7 @@ import { fontTitle } from '../utilities/font';
 import { BsInfoCircle } from 'react-icons/bs';
 import Link from 'next/link';
 import { getDatabase, ref, onValue } from 'firebase/database';
+import Spinner from '@/components/loadingSpinner';
 
 type CalendarData = {
   title: string;
@@ -19,6 +20,7 @@ const CalendarsPage = () => {
   const router = useRouter();
   const { isLoggedIn, uid } = useAuthContext();
   const [displayName, setDisplayName] = useState('');
+  const [loading, setLoading] = useState(true);
 
   // Redirect to the homepage if the user is not logged in
   useEffect(() => {
@@ -30,10 +32,10 @@ const CalendarsPage = () => {
   // State for the incoming calendars data
   const [calendarsData, setCalendarsData] = useState<
     | {
-        id: string;
-        title: string;
-        backgroundUrl: string;
-      }[]
+      id: string;
+      title: string;
+      backgroundUrl: string;
+    }[]
     | null
   >(null);
 
@@ -142,6 +144,7 @@ const CalendarsPage = () => {
   // Render the content of the page if the user is logged in
   return (
     <main className="content-width flex flex-col items-center gap-10">
+      {!calendarsData && <Spinner />}
       <div className={`${fontTitle} clr-accent text-4xl text-center bg-base`}>{displayName ? `Welcome, ${displayName}!` : 'Welcome!'}</div>
 
       {/* Info when there's no calendar to show */}

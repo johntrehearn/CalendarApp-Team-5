@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Calendar from "@/components/Calendar";
 import { useAuthContext } from "@/contexts/AuthContext";
+import Spinner from '@/components/loadingSpinner';
 
 interface Hatch {
   num: number;
@@ -21,6 +22,7 @@ interface CalendarData {
 const SingleCalendarPage = () => {
   const { uid } = useAuthContext();
   const [calendarData, setCalendarData] = useState<CalendarData | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const updateCalendar = async (
     newCalendarId: string,
@@ -168,7 +170,7 @@ const SingleCalendarPage = () => {
         </div>
       )}
 
-      {!calendarData && <p>Loading...</p>}
+      {!calendarData && <Spinner />}
     </div>
   );
 };
