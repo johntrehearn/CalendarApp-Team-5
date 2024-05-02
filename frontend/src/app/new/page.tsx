@@ -7,6 +7,8 @@ import { getFileUrl, isSafeImageType } from '../utilities/helpers';
 import { useAuthContext } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/firebase/firebase';
@@ -164,6 +166,8 @@ const NewCalendarPage = () => {
   };
 
   const handleSubmit = async () => {
+    const loadingToastId = toast.loading('Creating calendar...');
+
     // Log data state for testing purposes (data state is for the page, not for backend)
     console.log('Data state: ', data);
 
@@ -227,8 +231,23 @@ const NewCalendarPage = () => {
 
       const responseData = await response.json();
       console.log(responseData);
+
+      toast.update(loadingToastId, {
+        render: 'Calendar created!',
+        type: 'success',
+        isLoading: false,
+        autoClose: 2000,
+        onClose: () => router.push('/calendars'),
+      });
     } catch (error) {
       console.error('Error creating calendar:', error);
+
+      toast.update(loadingToastId, {
+        render: 'Failed to create calendar',
+        type: 'error',
+        isLoading: false,
+        autoClose: 2000,
+      });
     }
   };
 
@@ -317,6 +336,8 @@ const NewCalendarPage = () => {
       <section id="preview">
         <Calendar title={data.title} backgroundUrl={data.backgroundUrl} hatches={data.hatches} toggleHatch={toggleHatch} />
       </section>
+
+      <ToastContainer position="bottom-left" theme="dark" />
     </main>
   );
 };
