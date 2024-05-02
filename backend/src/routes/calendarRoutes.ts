@@ -106,24 +106,30 @@ router.post("/addcalendar/:uid", async (req, res) => {
 
     const userData = userDoc.data();
 
-    // Get the current number of calendars
-    const currentCalendarCount = Object.keys(userData.calendars).length;
-
     // change all isOpen to false no matter what the user submits
     for (let i = 0; i < calendarData.calendar1.hatches.length; i++) {
       calendarData.calendar1.hatches[i].isOpen = false;
     }
 
+    // Increment the calendar counter
+    const calendarCount = (userData.calendarCount || 0) + 1;
+
     // Add the new calendar to the user's data
     userData.calendars = {
       ...userData.calendars,
-      [`calendar${currentCalendarCount + 1}`]: calendarData.calendar1,
+      [`calendar${calendarCount}`]: calendarData.calendar1,
     };
+
+    // Update the calendar counter
+    userData.calendarCount = calendarCount;
 
     // Update the user's data in Firestore
     await admin.firestore().collection("users").doc(uid).set(userData);
 
-    res.json({ message: "Calendar created successfully" });
+    res.json({
+      message: "Calendar created successfully",
+      calendarId: `calendar${calendarCount}`,
+    });
   } catch (error) {
     console.error("Error creating calendar:", error);
     res.status(500).json({ error: "Failed to create calendar" });
