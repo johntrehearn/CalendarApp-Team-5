@@ -114,41 +114,54 @@ router.post(
 );
 
 // Route for user login using Firebase Auth and Realtime Database
-router.post("/login", async (req, res) => {
-  try {
-    const idToken = req.body.idToken as string; // Firebase ID token
+router.post(
+  "/login",
+  [
+    // Validate the request body
+    body("idToken").not().isEmpty().withMessage("ID token is required"),
+  ],
+  async (req: Request, res: Response) => {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-    // Verify the ID token
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-    const uid = decodedToken.uid;
+    try {
+      const idToken = req.body.idToken as string; // Firebase ID token
 
-    // Set the user ID in the session
-    //req.session.userId = uid;
+      // Verify the ID token
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const uid = decodedToken.uid;
 
-    // Retrieve user status from the database
-    const userStatusSnapshot = await admin
-      .database()
-      .ref("users/" + uid + "/status")
-      .once("value");
-    const userStatus = userStatusSnapshot.val();
+      // Set the user ID in the session
+      //req.session.userId = uid;
 
-    // Generate JWT token
-    const token = generateTokenAndSetCookie(uid, userStatus, res);
+      // Retrieve user status from the database
+      const userStatusSnapshot = await admin
+        .database()
+        .ref("users/" + uid + "/status")
+        .once("value");
+      const userStatus = userStatusSnapshot.val();
 
-    // User signed in successfully
-    res.status(200).json({
-      message: "User signed in successfully",
-      user: {
-        uid: uid,
-        status: userStatus,
-      },
-      token: token,
-    });
-  } catch (error) {
-    console.error("Error signing in user:", error);
-    res.status(500).json({ error: "Failed to sign in user" });
+      // Generate JWT token
+      const token = generateTokenAndSetCookie(uid, userStatus, res);
+
+      // User signed in successfully
+      res.status(200).json({
+        message: "User signed in successfully",
+        user: {
+          uid: uid,
+          status: userStatus,
+        },
+        token: token,
+      });
+    } catch (error) {
+      console.error("Error signing in user:", error);
+      res.status(500).json({ error: "Failed to sign in user" });
+    }
   }
-});
+);
 
 // Route for user logout
 router.post("/logout", async (req, res) => {
