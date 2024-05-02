@@ -233,7 +233,7 @@ const NewCalendarPage = () => {
       console.log(responseData);
 
       toast.update(loadingToastId, {
-        render: 'Calendar created!',
+        render: 'Calendar created! Redirecting to My Calendars...',
         type: 'success',
         isLoading: false,
         autoClose: 2000,
