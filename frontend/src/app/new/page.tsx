@@ -1,11 +1,14 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Calendar from '@/components/Calendar';
 import { FaEdit } from 'react-icons/fa';
 import { FaArrowUpLong, FaArrowDownLong, FaCalendarDays } from 'react-icons/fa6';
 import { getFileUrl, isSafeImageType } from '../utilities/helpers';
 import { useAuthContext } from '@/contexts/AuthContext';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/firebase/firebase';
@@ -29,6 +32,15 @@ type HatchType = {
 // NEW CALENDAR PAGE
 const NewCalendarPage = () => {
   const { isLoggedIn, uid } = useAuthContext();
+  const router = useRouter();
+
+  // Redirect to the homepage if the user is not logged in
+  useEffect(() => {
+    if (!isLoggedIn) {
+      router.replace('/');
+    }
+  }, [isLoggedIn, router]);
+
   // DATA STATE
   // It uses DataType defined above
   // Default values are mostly null or empty arrays so the user can fill them in
@@ -154,6 +166,8 @@ const NewCalendarPage = () => {
   };
 
   const handleSubmit = async () => {
+    const loadingToastId = toast.loading('Creating calendar...');
+
     // Log data state for testing purposes (data state is for the page, not for backend)
     console.log('Data state: ', data);
 
@@ -217,10 +231,30 @@ const NewCalendarPage = () => {
 
       const responseData = await response.json();
       console.log(responseData);
+
+      toast.update(loadingToastId, {
+        render: 'Calendar created! Redirecting to My Calendars...',
+        type: 'success',
+        isLoading: false,
+        autoClose: 2000,
+        onClose: () => router.push('/calendars'),
+      });
     } catch (error) {
       console.error('Error creating calendar:', error);
+
+      toast.update(loadingToastId, {
+        render: 'Failed to create calendar',
+        type: 'error',
+        isLoading: false,
+        autoClose: 2000,
+      });
     }
   };
+
+  // Render nothing if the user is not logged in
+  if (!isLoggedIn) {
+    return null;
+  }
 
   return (
     <main className="grid md:grid-cols-[300px_1fr] min-h-screen">
@@ -302,6 +336,8 @@ const NewCalendarPage = () => {
       <section id="preview">
         <Calendar title={data.title} backgroundUrl={data.backgroundUrl} hatches={data.hatches} toggleHatch={toggleHatch} />
       </section>
+
+      <ToastContainer position="bottom-left" theme="dark" />
     </main>
   );
 };
