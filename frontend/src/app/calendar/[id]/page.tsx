@@ -142,6 +142,7 @@ const SingleCalendarPage = () => {
 
   return (
     <div>
+      {/* Show Calendar */}
       {calendarData && (
         <div>
           <Calendar title={calendarData.title} backgroundUrl={calendarData.backgroundUrl} hatches={calendarData.hatches} toggleHatch={toggleHatch} />
@@ -151,6 +152,7 @@ const SingleCalendarPage = () => {
         </div>
       )}
 
+      {/* Info when there's no calendar to show */}
       {!calendarData && (
         <div className="content-width">
           <div role="alert" className="alert mx-auto">

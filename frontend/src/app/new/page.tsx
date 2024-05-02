@@ -1,11 +1,12 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Calendar from '@/components/Calendar';
 import { FaEdit } from 'react-icons/fa';
 import { FaArrowUpLong, FaArrowDownLong, FaCalendarDays } from 'react-icons/fa6';
 import { getFileUrl, isSafeImageType } from '../utilities/helpers';
 import { useAuthContext } from '@/contexts/AuthContext';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/firebase/firebase';
@@ -29,6 +30,15 @@ type HatchType = {
 // NEW CALENDAR PAGE
 const NewCalendarPage = () => {
   const { isLoggedIn, uid } = useAuthContext();
+  const router = useRouter();
+
+  // Redirect to the homepage if the user is not logged in
+  useEffect(() => {
+    if (!isLoggedIn) {
+      router.replace('/');
+    }
+  }, [isLoggedIn, router]);
+
   // DATA STATE
   // It uses DataType defined above
   // Default values are mostly null or empty arrays so the user can fill them in
@@ -221,6 +231,11 @@ const NewCalendarPage = () => {
       console.error('Error creating calendar:', error);
     }
   };
+
+  // Render nothing if the user is not logged in
+  if (!isLoggedIn) {
+    return null;
+  }
 
   return (
     <main className="grid md:grid-cols-[300px_1fr] min-h-screen">
