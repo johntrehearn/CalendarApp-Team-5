@@ -3,6 +3,7 @@ import axios from "axios";
 import sharp from "sharp";
 import stripePackage from "stripe";
 import { sendEmail } from "../utils/confirmAccount";
+import { body, validationResult } from "express-validator";
 
 import image_generation from "../utils/generateImage";
 
@@ -36,60 +37,81 @@ const router = express.Router();
 
 // Route for user registration using Firebase Auth and Realtime Database and Firestore  (with email verification)
 
-router.post("/register", async (req, res) => {
-  try {
-    const { email, password, displayName, status } = req.body;
-
-    // Check if status is not "free"
-    if (status && status !== "free") {
-      return res.status(400).json({ error: "Invalid status value" });
+router.post(
+  "/register",
+  [
+    // Validate the request body
+    body("email").isEmail().withMessage("Invalid email"),
+    body("password")
+      .isLength({ min: 5 })
+      .withMessage("Password must be at least 7 characters long"),
+    body("displayName").not().isEmpty().withMessage("Display name is required"),
+    body("status")
+      .optional()
+      .isIn(["free"])
+      .withMessage("Invalid status value"),
+  ],
+  async (req: Request, res: Response) => {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
-    // Create user using Firebase Auth
-    const userRecord = await admin.auth().createUser({
-      email,
-      password,
-      displayName,
-    });
+    try {
+      const { email, password, displayName, status } = req.body;
 
-    // Store additional user details in Realtime Database
-    await admin
-      .database()
-      .ref("users/" + userRecord.uid)
-      .set({
-        email: userRecord.email,
-        displayName: userRecord.displayName,
-        status: "free",
+      // Check if status is not "free"
+      if (status && status !== "free") {
+        return res.status(400).json({ error: "Invalid status value" });
+      }
+
+      // Create user using Firebase Auth
+      const userRecord = await admin.auth().createUser({
+        email,
+        password,
+        displayName,
       });
 
-    // Store additional user details in Firestore
-    await admin
-      .firestore()
-      .collection("users")
-      .doc(userRecord.uid)
-      .set({ calendars: {} });
+      // Store additional user details in Realtime Database
+      await admin
+        .database()
+        .ref("users/" + userRecord.uid)
+        .set({
+          email: userRecord.email,
+          displayName: userRecord.displayName,
+          status: "free",
+        });
 
-    // Send welcome email
-    // const emailSubject = "Welcome to our platform!";
-    // const emailHtml =
-    // "<h1>Welcome!</h1><p>Thank you for registering on our platform.</p>";
-    // await sendEmail(email, emailSubject, emailHtml);
+      // Store additional user details in Firestore
+      await admin
+        .firestore()
+        .collection("users")
+        .doc(userRecord.uid)
+        .set({ calendars: {} });
 
-    // User created successfully
-    res.status(201).json({
-      message: "User created successfully",
-      user: {
-        uid: userRecord.uid,
-        email: userRecord.email,
-        displayName: userRecord.displayName,
-        status: "free",
-      },
-    });
-  } catch (error) {
-    console.error("Error creating user:", error);
-    res.status(500).json({ error: "Failed to create user" });
+      // Send welcome email
+      // const emailSubject = "Welcome to our platform!";
+      // const emailHtml =
+      // "<h1>Welcome!</h1><p>Thank you for registering on our platform.</p>";
+      // await sendEmail(email, emailSubject, emailHtml);
+
+      // User created successfully
+      res.status(201).json({
+        message: "User created successfully",
+        user: {
+          uid: userRecord.uid,
+          email: userRecord.email,
+          displayName: userRecord.displayName,
+          status: "free",
+        },
+      });
+    } catch (error) {
+      console.error("Error creating user:", error);
+      res.status(500).json({ error: "Failed to create user" });
+    }
   }
-});
+);
 
 // Route for user login using Firebase Auth and Realtime Database
 router.post("/login", async (req, res) => {
