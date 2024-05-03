@@ -170,6 +170,54 @@ router.put("/updatecalendar/:uid/:calendarId", async (req, res) => {
   }
 });
 
+// Route to uppdate a specific calendar for a user from edit page
+
+router.put("/editcalendar/:uid/:calendarId", async (req, res) => {
+  try {
+    const { uid, calendarId } = req.params;
+    const updatedCalendar = req.body;
+
+    // Retrieve user's calendar data from Firestore
+    const userDoc = await admin.firestore().collection("users").doc(uid).get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const userData = userDoc.data();
+
+    // Check if the user has any calendars
+    if (!userData.calendars) {
+      return res
+        .status(404)
+        .json({ error: "No calendars found for this user" });
+    }
+
+    const calendar = userData.calendars[calendarId];
+
+    if (!calendar) {
+      return res.status(404).json({ error: "Calendar not found" });
+    }
+
+    // Update the calendar
+    userData.calendars[calendarId] = updatedCalendar;
+
+    // Update the user's data in Firestore
+    await admin
+      .firestore()
+      .collection("users")
+      .doc(uid)
+      .update({
+        [`calendars.${calendarId}`]: updatedCalendar,
+      });
+
+    res.json({ message: "Calendar updated successfully" });
+  } catch (error) {
+    console.error("Error updating calendar:", error);
+    res.status(500).json({ error: "Failed to update calendar" });
+  }
+});
+
 // Update hatch status of a specific calendar
 
 router.put("/updatehatch/:uid/:calendarId", async (req, res) => {

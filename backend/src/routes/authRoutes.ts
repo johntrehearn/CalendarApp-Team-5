@@ -43,7 +43,7 @@ router.post(
     // Validate the request body
     body("email").isEmail().withMessage("Invalid email"),
     body("password")
-      .isLength({ min: 5 })
+      .isLength({ min: 7 })
       .withMessage("Password must be at least 7 characters long"),
     body("displayName").not().isEmpty().withMessage("Display name is required"),
     body("status")
