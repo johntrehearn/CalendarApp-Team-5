@@ -20,7 +20,6 @@ const CalendarsPage = () => {
   const router = useRouter();
   const { isLoggedIn, uid } = useAuthContext();
   const [displayName, setDisplayName] = useState('');
-  const [loading, setLoading] = useState(true);
 
   // Redirect to the homepage if the user is not logged in
   useEffect(() => {

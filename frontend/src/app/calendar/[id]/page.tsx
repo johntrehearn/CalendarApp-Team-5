@@ -22,7 +22,6 @@ interface CalendarData {
 const SingleCalendarPage = () => {
   const { uid } = useAuthContext();
   const [calendarData, setCalendarData] = useState<CalendarData | null>(null);
-  const [loading, setLoading] = useState(true);
 
   const updateCalendar = async (
     newCalendarId: string,
