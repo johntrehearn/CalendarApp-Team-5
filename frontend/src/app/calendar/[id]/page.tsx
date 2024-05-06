@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Calendar from '@/components/Calendar';
-import { useAuthContext } from '@/contexts/AuthContext';
-import { BsInfoCircle } from 'react-icons/bs';
-import Link from 'next/link';
+import { useState, useEffect } from "react";
+import Calendar from "@/components/Calendar";
+import { useAuthContext } from "@/contexts/AuthContext";
+import Spinner from '@/components/loadingSpinner';
 
 interface Hatch {
   num: number;
@@ -152,20 +151,8 @@ const SingleCalendarPage = () => {
         </div>
       )}
 
-      {/* Info when there's no calendar to show */}
-      {!calendarData && (
-        <div className="content-width">
-          <div role="alert" className="alert mx-auto">
-            <BsInfoCircle className="text-primary text-xl" />
-            <span>No calendars found with this id.</span>
-            <div>
-              <Link href="/" className="btn btn-sm btn-primary">
-                Go to Homepage
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
+      {!calendarData && <Spinner />}
+
     </div>
   );
 };
