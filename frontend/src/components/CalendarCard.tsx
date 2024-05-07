@@ -23,16 +23,16 @@ const CalendarCard: React.FC<CalendarCardProps> = ({ id, title, backgroundUrl, h
         </button>
       </figure>
       <div className="card-body items-center text-center">
-        <h2 className="card-title text-lg pb-4">{title}</h2>
+        <h2 className="card-title text-lg pb-4 clr-base">{title}</h2>
 
         <div className="card-actions flex gap-5">
-          <button className="btn btn-square btn-outline" onClick={() => handleClick('share')}>
+          <button className="btn-card" onClick={() => handleClick('share')}>
             <IoShareSocial fontSize={30} />
           </button>
-          <button className="btn btn-square btn-outline" onClick={() => handleClick('edit')}>
+          <button className="btn-card" onClick={() => handleClick('edit')}>
             <FaEdit fontSize={30} />
           </button>
-          <button className="btn btn-square btn-outline" style={{ background: 'pink' }} onClick={() => handleClick('delete')}>
+          <button className="btn-card" style={{ background: 'pink' }} onClick={() => handleClick('delete')}>
             <RiDeleteBin6Line fontSize={30} />
           </button>
         </div>

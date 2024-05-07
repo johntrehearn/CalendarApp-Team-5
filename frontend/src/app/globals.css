@@ -8,6 +8,9 @@
   --clr-base: #131625;
   /* Warm yellow */
   --clr-accent: #efd7bb;
+
+  /* BORDER */
+  --border-main: 1px solid var(--clr-accent);
 }
 
 * {
@@ -25,6 +28,10 @@ body {
   background-image: url('/stars.png');
   background-repeat: repeat;
   background-size: auto;
+}
+
+button {
+  font-family: inherit;
 }
 
 /* Colour and background colour utility classes */
@@ -49,4 +56,55 @@ body {
   max-width: 1500px;
   margin: 0 auto;
   padding: 0 2.5rem;
+}
+
+/* Button classes */
+.btn-main {
+  @apply btn bg-accent clr-base font-normal text-base;
+  border: var(--border-main);
+}
+.btn-main:hover {
+  @apply bg-base clr-accent;
+  border: var(--border-main);
+}
+
+.btn-main-circle {
+  @apply btn btn-circle bg-accent clr-base font-normal text-base;
+  border: var(--border-main);
+}
+.btn-main-circle:hover {
+  @apply bg-base clr-accent;
+  border: var(--border-main);
+}
+
+.btn-two {
+  @apply btn bg-base clr-accent font-normal text-base;
+  border: var(--border-main);
+}
+.btn-two:hover {
+  @apply bg-accent clr-base;
+  border: var(--border-main);
+}
+
+.btn-subtle {
+  padding: 0.2rem;
+  border: 1px solid var(--clr-base);
+  transition: all 0.2s ease-out;
+}
+.btn-subtle:hover {
+  border: var(--border-main);
+  border-radius: 5px;
+  transform: scale(1.05);
+}
+
+.btn-card {
+  @apply btn btn-square;
+  border: 1px solid var(--clr-base);
+  background-color: transparent;
+  color: var(--clr-base);
+}
+.btn-card:hover {
+  background-color: var(--clr-base);
+  color: white;
+  transform: scale(1.1);
 }

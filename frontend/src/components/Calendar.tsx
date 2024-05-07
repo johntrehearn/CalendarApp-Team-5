@@ -19,7 +19,7 @@ const Calendar: React.FC<CalendarProps> = ({ title, backgroundUrl, hatches, togg
   return (
     <div>
       <div className="p-10 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: backgroundUrl ? `url(${backgroundUrl})` : 'none' }}>
-        <p className={`${fontTitle} w-max text-center text-3xl m-5 bg-[white] py-3 px-10 rounded-lg mx-auto mb-10`}>{title}</p>
+        <p className={`${fontTitle} w-max text-center text-3xl m-5 bg-[white] clr-base py-3 px-10 rounded-lg mx-auto mb-10`}>{title}</p>
         <div className="flex gap-5 flex-wrap justify-center">
           {hatches.map((hatch) => (
             <Hatch key={hatch.num} num={hatch.num} isOpen={hatch.isOpen} imageUrl={hatch.imageUrl} toggleHatch={toggleHatch} />

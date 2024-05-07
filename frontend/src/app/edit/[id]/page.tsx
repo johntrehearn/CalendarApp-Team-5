@@ -316,7 +316,7 @@ const EditCalendarPage = () => {
         <div>
           <h2 className="text-3xl">Background</h2>
           <div className="bg-slate-500 p-3 flex flex-col gap-3 rounded">
-            <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900" onChange={handleBgChange} />
+            <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900 bg-white" onChange={handleBgChange} />
             <button className="btn btn-warning btn-outline btn-sm" onClick={handleResetBg}>
               Reset
             </button>
@@ -341,7 +341,7 @@ const EditCalendarPage = () => {
             <div className="bg-slate-700 flex flex-col gap-3 text-center p-2 rounded">
               {displayHatches.map((hatch) => (
                 <div key={hatch.num} className={hatch.num === currentHatch ? 'block' : 'hidden'}>
-                  <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900" onChange={handleHatchChange} />
+                  <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900 bg-white" onChange={handleHatchChange} />
                 </div>
               ))}
               <button className="btn btn-warning btn-outline btn-sm" onClick={handleResetHatch}>
@@ -358,11 +358,11 @@ const EditCalendarPage = () => {
           </div>
         </div>
         {/* Submit */}
-        <button className="btn" onClick={handleSubmit}>
+        <button className="btn btn-primary text-base" onClick={handleSubmit}>
           Submit
         </button>
         {/* Cancel */}
-        <Link className="btn btn-outline text-white" href="/calendars">
+        <Link className="btn btn-outline text-white text-base" href="/calendars">
           Cancel
         </Link>
       </section>

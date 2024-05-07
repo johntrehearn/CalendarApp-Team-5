@@ -31,10 +31,10 @@ const CalendarsPage = () => {
   // State for the incoming calendars data
   const [calendarsData, setCalendarsData] = useState<
     | {
-      id: string;
-      title: string;
-      backgroundUrl: string;
-    }[]
+        id: string;
+        title: string;
+        backgroundUrl: string;
+      }[]
     | null
   >(null);
 
@@ -168,7 +168,7 @@ const CalendarsPage = () => {
             ))}
           </div>
 
-          <Link href="/new" className="btn bg-accent text-black fixed bottom-5 right-5 z-10">
+          <Link href="/new" className="btn-main fixed bottom-5 right-5 z-10">
             + New Calendar
           </Link>
         </>
