@@ -279,7 +279,7 @@ const NewCalendarPage = () => {
         {/* Background */}
         <div>
           <h2 className="text-3xl">Background</h2>
-          <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900" onChange={handleBgChange} />
+          <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900 bg-white" onChange={handleBgChange} />
         </div>
         {/* Hatches */}
         <div>
@@ -300,7 +300,7 @@ const NewCalendarPage = () => {
             <div>
               {data.hatches.map((hatch, index) => (
                 <div key={hatch.num} className={hatch.num === currentHatch ? 'block' : 'hidden'}>
-                  <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900" onChange={handleHatchChange} />
+                  <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900 bg-white" onChange={handleHatchChange} />
                 </div>
               ))}
             </div>
@@ -323,11 +323,11 @@ const NewCalendarPage = () => {
           </div>
         </div>
         {/* Submit */}
-        <button className="btn" onClick={handleSubmit}>
+        <button className="btn btn-primary text-base" onClick={handleSubmit}>
           Submit
         </button>
         {/* Cancel */}
-        <Link className="btn btn-outline text-white" href="/calendars">
+        <Link className="btn btn-outline text-white text-base" href="/calendars">
           Cancel
         </Link>
       </section>

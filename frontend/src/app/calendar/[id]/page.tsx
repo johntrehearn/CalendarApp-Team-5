@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from "react";
-import Calendar from "@/components/Calendar";
-import { useAuthContext } from "@/contexts/AuthContext";
+import { useState, useEffect } from 'react';
+import Calendar from '@/components/Calendar';
+import { useAuthContext } from '@/contexts/AuthContext';
 import Spinner from '@/components/loadingSpinner';
 
 interface Hatch {
@@ -145,14 +145,13 @@ const SingleCalendarPage = () => {
       {calendarData && (
         <div>
           <Calendar title={calendarData.title} backgroundUrl={calendarData.backgroundUrl} hatches={calendarData.hatches} toggleHatch={toggleHatch} />
-          <button className="btn bg-accent fixed bottom-5 right-5 z-10" onClick={handleShare}>
+          <button className="btn-main fixed bottom-5 right-5 z-10" onClick={handleShare}>
             Share
           </button>
         </div>
       )}
 
       {!calendarData && <Spinner />}
-
     </div>
   );
 };
