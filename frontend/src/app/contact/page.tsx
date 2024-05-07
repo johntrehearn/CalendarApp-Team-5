@@ -1,5 +1,5 @@
 "use client";
-import "./contact.css";
+
 import React from "react";
 
 function ContactPage() {
@@ -9,9 +9,7 @@ function ContactPage() {
         <h1 className="text-center mb-4">Contact Us</h1>
         <form className="contact-form" action="#" method="POST">
           <div className="form-group mb-4">
-            <label htmlFor="name" className="block mb-1">
-              Your Name
-            </label>
+            <label htmlFor="name" className="block mb-1"></label>
             <input
               type="text"
               id="name"
@@ -22,9 +20,7 @@ function ContactPage() {
             />
           </div>
           <div className="form-group mb-4">
-            <label htmlFor="email" className="block mb-1">
-              Your Email
-            </label>
+            <label htmlFor="email" className="block mb-1"></label>
             <input
               type="email"
               id="email"
@@ -35,14 +31,12 @@ function ContactPage() {
             />
           </div>
           <div className="form-group mb-4">
-            <label htmlFor="message" className="block mb-1">
-              Your Message
-            </label>
+            <label htmlFor="message" className="block mb-1"></label>
             <textarea
               id="message"
               name="message"
               placeholder="Your message"
-              rows="5"
+              rows={5}
               required
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 resize-y"
             ></textarea>
