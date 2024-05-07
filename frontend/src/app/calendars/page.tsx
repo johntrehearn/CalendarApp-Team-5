@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthContext } from '@/contexts/AuthContext';
-import CalendarCard from '../../components/CalendarCard';
-import { fontTitle } from '../utilities/font';
-import { BsInfoCircle } from 'react-icons/bs';
-import Link from 'next/link';
-import { getDatabase, ref, onValue } from 'firebase/database';
-import Spinner from '@/components/loadingSpinner';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/contexts/AuthContext";
+import CalendarCard from "../../components/CalendarCard";
+import { fontTitle } from "../utilities/font";
+import { BsInfoCircle } from "react-icons/bs";
+import Link from "next/link";
+import { getDatabase, ref, onValue } from "firebase/database";
+import Spinner from "@/components/loadingSpinner";
 
 type CalendarData = {
   title: string;
@@ -19,12 +19,13 @@ type CalendarData = {
 const CalendarsPage = () => {
   const router = useRouter();
   const { isLoggedIn, uid } = useAuthContext();
-  const [displayName, setDisplayName] = useState('');
+  const [displayName, setDisplayName] = useState("");
+  const [loading, setLoading] = useState(true);
 
   // Redirect to the homepage if the user is not logged in
   useEffect(() => {
     if (!isLoggedIn) {
-      router.replace('/');
+      router.replace("/");
     }
   }, [isLoggedIn, router]);
 
@@ -39,14 +40,20 @@ const CalendarsPage = () => {
   >(null);
 
   useEffect(() => {
-    if (uid) {
-      const db = getDatabase();
-      const userRef = ref(db, `users/${uid}`);
-      onValue(userRef, (snapshot) => {
-        const data = snapshot.val();
-        setDisplayName(data.displayName);
-      });
+    // Fetch user data from the database to display the name
+    if (!uid) {
+      return;
     }
+
+    const db = getDatabase();
+    const userRef = ref(db, `users/${uid}`);
+    onValue(userRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data && data.displayName) {
+        setDisplayName(data.displayName);
+      }
+      setLoading(false);
+    });
   }, [uid]);
 
   // Fetch calendars
@@ -54,9 +61,11 @@ const CalendarsPage = () => {
     if (!uid) return;
 
     try {
-      const response = await fetch(`http://localhost:8080/calendar/getcalendars/${uid}`);
+      const response = await fetch(
+        `http://localhost:8080/calendar/getcalendars/${uid}`
+      );
       if (!response.ok) {
-        throw new Error('Failed to fetch calendars');
+        throw new Error("Failed to fetch calendars");
       }
       const data = await response.json();
       // If no calendars are fetched, return an empty array
@@ -69,7 +78,7 @@ const CalendarsPage = () => {
       }));
       return calendarsArray;
     } catch (error) {
-      console.error('Error fetching calendars:', error);
+      console.error("Error fetching calendars:", error);
     }
   };
 
@@ -82,7 +91,7 @@ const CalendarsPage = () => {
     id: string;
     title: string;
     backgroundUrl: string;
-  }>({ id: '', title: '', backgroundUrl: '' });
+  }>({ id: "", title: "", backgroundUrl: "" });
 
   // When a card button is clicked, handleAction sets the selected card and performs the chosen action
   const handleAction = (id: string, action: string) => {
@@ -91,28 +100,28 @@ const CalendarsPage = () => {
     setSelectedCard(selected!);
 
     // Navigate to the single calendar page and sending the cal id
-    if (action === 'show') {
+    if (action === "show") {
       router.push(`/calendar/${id}`);
     }
 
     // Open the delete modal for more actions
-    if (action === 'delete') {
+    if (action === "delete") {
       openDeleteModal();
     }
 
     // Navigate to the edit page - also needs id???
-    if (action === 'edit') {
+    if (action === "edit") {
       router.push(`/edit/${id}`);
     }
 
     // For now, just log which calendar is being shared
-    if (action === 'share') {
+    if (action === "share") {
       console.log(`Sharing calendar with id: ${id}`);
     }
   };
 
   const openDeleteModal = () => {
-    const modal = document.getElementById('delete_modal') as HTMLDialogElement;
+    const modal = document.getElementById("delete_modal") as HTMLDialogElement;
     if (modal) {
       modal.showModal();
     }
@@ -120,18 +129,24 @@ const CalendarsPage = () => {
 
   const deleteCalendar = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/calendar/deletecalendar/${uid}/${selectedCard.id}`, { method: 'DELETE' });
+      const response = await fetch(
+        `http://localhost:8080/calendar/deletecalendar/${uid}/${selectedCard.id}`,
+        { method: "DELETE" }
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to delete calendar');
+        throw new Error("Failed to delete calendar");
       }
 
       console.log(`Deleted calendar with id: ${selectedCard.id}`);
 
       // Remove the deleted calendar from the local state
-      setCalendarsData(calendarsData?.filter((calendar) => calendar.id !== selectedCard.id) || null);
+      setCalendarsData(
+        calendarsData?.filter((calendar) => calendar.id !== selectedCard.id) ||
+          null
+      );
     } catch (error) {
-      console.error('Error deleting calendar:', error);
+      console.error("Error deleting calendar:", error);
     }
   };
 
@@ -140,11 +155,17 @@ const CalendarsPage = () => {
     return null;
   }
 
+  if (loading) {
+    return <Spinner />; // Loading spinner while fetching user data from the database for the name
+  }
+
   // Render the content of the page if the user is logged in
   return (
     <main className="content-width flex flex-col items-center gap-10">
       {!calendarsData && <Spinner />}
-      <div className={`${fontTitle} clr-accent text-4xl text-center bg-base`}>{displayName ? `Welcome, ${displayName}!` : 'Welcome!'}</div>
+      <div className={`${fontTitle} clr-accent text-4xl text-center bg-base`}>
+        {displayName ? `Welcome, ${displayName}!` : "Welcome!"}
+      </div>
 
       {/* Info when there's no calendar to show */}
       {calendarsData?.length === 0 && (
@@ -164,7 +185,13 @@ const CalendarsPage = () => {
         <>
           <div className="flex flex-wrap gap-5 justify-center">
             {calendarsData.map((calendar) => (
-              <CalendarCard key={calendar.id} id={calendar.id} title={calendar.title} backgroundUrl={calendar.backgroundUrl} handleAction={handleAction} />
+              <CalendarCard
+                key={calendar.id}
+                id={calendar.id}
+                title={calendar.title}
+                backgroundUrl={calendar.backgroundUrl}
+                handleAction={handleAction}
+              />
             ))}
           </div>
 
