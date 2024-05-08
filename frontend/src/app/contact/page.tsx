@@ -9,7 +9,7 @@ const ContactPage = () => {
     <div className="flex items-center justify-center h-screen">
       <div className="card w-80 bg-[#e2e8f0] shadow-xl px-6 py-4">
         <div className="text-center my-8">
-          <h1 className="text-4xl font-bold text-purple-800">Contact Us</h1>
+          <h1 className="text-4xl font-bold text-clr-accent">Contact Us</h1>
         </div>
         <form
           /*  onSubmit={handleSubmit} */
@@ -32,7 +32,7 @@ const ContactPage = () => {
           ></textarea>
           <button
             type="submit"
-            className="btn hover:btn-outline font-normal text-lg"
+            className="btn hover:btn-outline bg-clr-base text-[#efd7bb]font-normal text-lg "
           >
             Submit
           </button>
