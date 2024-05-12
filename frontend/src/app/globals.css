@@ -11,6 +11,9 @@
 
   /* BORDER */
   --border-main: 1px solid var(--clr-accent);
+
+  /* FIXED NAV HEIGHT */
+  --nav-height: 4rem;
 }
 
 * {
@@ -20,14 +23,27 @@
 }
 
 body {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  display: grid;
+  grid-template-rows: var(--nav-height) 1fr auto;
+  grid-template-areas: 'header' 'main' 'footer';
+  width: 100%;
   min-height: 100vh;
   background-color: var(--clr-base);
   background-image: url('/stars.png');
   background-repeat: repeat;
   background-size: auto;
+}
+
+header {
+  grid-area: header;
+}
+
+main {
+  grid-area: main;
+}
+
+footer {
+  grid-area: footer;
 }
 
 button {
@@ -55,7 +71,8 @@ button {
   width: 100%;
   max-width: 1500px;
   margin: 0 auto;
-  padding: 0 2.5rem;
+  padding-right: 2.5rem;
+  padding-left: 2.5rem;
 }
 
 /* Button classes */
@@ -86,17 +103,6 @@ button {
   border: var(--border-main);
 }
 
-.btn-subtle {
-  padding: 0.2rem;
-  border: 1px solid var(--clr-base);
-  transition: all 0.2s ease-out;
-}
-.btn-subtle:hover {
-  border: var(--border-main);
-  border-radius: 5px;
-  transform: scale(1.05);
-}
-
 .btn-card {
   @apply btn btn-square;
   border: 1px solid var(--clr-base);
@@ -107,4 +113,13 @@ button {
   background-color: var(--clr-base);
   color: white;
   transform: scale(1.1);
+}
+
+.link-btn {
+  color: var(--clr-accent);
+  text-decoration: none;
+  font-size: 1rem;
+}
+.link-btn:hover {
+  text-decoration: wavy underline;
 }

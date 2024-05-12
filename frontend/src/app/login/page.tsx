@@ -30,8 +30,8 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="content-width flex items-center justify-center">
-      <div className="card w-80 bg-[#e2e8f0] shadow-xl px-6 py-4">
+    <main className="content-width flex items-center justify-center py-10">
+      <div className="card max-w-80 w-full bg-[#e2e8f0] shadow-xl px-6 py-4">
         <div className="flex items-center justify-between clr-base">
           <IoIosStar fontSize={30} />
           <div className={`${fontTitle} text-4xl text-current bg-[#e2e8f0] my-8 text-center`}>Log In</div>
@@ -46,7 +46,7 @@ const LoginPage = () => {
           </button>
         </form>
       </div>
-    </div>
+    </main>
   );
 };
 
