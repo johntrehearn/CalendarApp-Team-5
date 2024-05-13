@@ -1,25 +1,23 @@
 'use client';
 
-import React from 'react';
-import { useAuthContext } from '@/contexts/AuthContext';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { fontTitle } from '../utilities/font';
-import { IoIosStar } from 'react-icons/io';
-import { useState } from 'react';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const RegisterPage = () => {
-  const { login } = useAuthContext();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [accountCreated, setAccountCreated] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const loadingToastId = toast.loading('Registering...');
+
     e.preventDefault();
     if (!isRegistering) {
       if (password !== confirmPassword) {
@@ -37,11 +35,25 @@ const RegisterPage = () => {
           status: 'free',
         });
 
-        // Set accountCreated to true upon successful registration
-        setAccountCreated(true);
+        // Show success toast and redirect to login page
+        toast.update(loadingToastId, {
+          render: 'Registering successful! Redirecting to Login...',
+          type: 'success',
+          isLoading: false,
+          autoClose: 2000,
+          onClose: () => router.push('/login'),
+        });
       } catch (error: any) {
         setErrorMessage(error.response.data.error);
         setIsRegistering(false);
+
+        // Show error toast if registration fails
+        toast.update(loadingToastId, {
+          render: errorMessage || 'An error occurred. Please try again.',
+          type: 'error',
+          isLoading: false,
+          autoClose: 2000,
+        });
       }
     }
   };
@@ -94,8 +106,7 @@ const RegisterPage = () => {
         </form>
       </div>
 
-      <div>{errorMessage && <div className="text-red-500">{errorMessage}</div>}</div>
-      <div>{accountCreated && <div className="text-green-500">Account created successfully!</div>}</div>
+      <ToastContainer position="bottom-left" theme="dark" />
     </main>
   );
 };

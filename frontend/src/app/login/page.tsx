@@ -3,8 +3,6 @@
 import React from 'react';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { fontTitle } from '../utilities/font';
-import { IoIosStar } from 'react-icons/io';
 import { doSignInWithEmailAndPassword } from '@/firebase/auth';
 
 const LoginPage = () => {
