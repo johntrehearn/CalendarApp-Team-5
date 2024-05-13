@@ -118,6 +118,7 @@ button {
 .link-btn {
   color: var(--clr-accent);
   text-decoration: none;
+  text-underline-offset: 0.3rem;
   font-size: 1rem;
 }
 .link-btn:hover {

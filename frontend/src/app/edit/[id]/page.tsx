@@ -296,11 +296,11 @@ const EditCalendarPage = () => {
     <main className="grid md:grid-cols-[300px_1fr] min-h-screen">
       {/* View navigation on small screens */}
       <div className="md:hidden flex flex-col gap-3 w-max fixed bottom-5 right-5 z-20">
-        <a href="#settings" className="btn btn-sm btn-accent text-lg">
+        <a href="#settings" className="btn-main btn-sm">
           <FaArrowUpLong />
           <FaEdit />
         </a>
-        <a href="#preview" className="btn btn-sm btn-accent text-lg">
+        <a href="#preview" className="btn-main btn-sm">
           <FaArrowDownLong />
           <FaCalendarDays />
         </a>
@@ -309,12 +309,12 @@ const EditCalendarPage = () => {
       <section id="settings" className="flex flex-col gap-12 max-w-[300px] mx-auto py-8 px-4 bg-base text-white">
         {/* Title */}
         <div>
-          <h2 className="text-3xl">Title</h2>
+          <h2 className="text-xl mb-1">Title</h2>
           <input type="text" placeholder="Enter calendar title" className="input input-bordered w-full max-w-xs text-stone-900 bg-white" onChange={handleTitleChange} />
         </div>
         {/* Background */}
         <div>
-          <h2 className="text-3xl">Background</h2>
+          <h2 className="text-xl mb-1">Background</h2>
           <div className="bg-slate-500 p-3 flex flex-col gap-3 rounded">
             <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900 bg-white" onChange={handleBgChange} />
             <button className="btn btn-warning btn-outline btn-sm" onClick={handleResetBg}>
@@ -324,7 +324,7 @@ const EditCalendarPage = () => {
         </div>
         {/* Hatches */}
         <div>
-          <h2 className="text-3xl">Hatches</h2>
+          <h2 className="text-xl mb-1">Hatches</h2>
           {/* Carousel */}
           <div className="bg-slate-500 p-3 flex flex-col gap-3 rounded">
             {/* Carousel navigation */}
@@ -358,11 +358,11 @@ const EditCalendarPage = () => {
           </div>
         </div>
         {/* Submit */}
-        <button className="btn btn-primary text-base" onClick={handleSubmit}>
+        <button className="btn-main" onClick={handleSubmit}>
           Submit
         </button>
         {/* Cancel */}
-        <Link className="btn btn-outline text-white text-base" href="/calendars">
+        <Link className="btn-two" href="/calendars">
           Cancel
         </Link>
       </section>

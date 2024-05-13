@@ -48,12 +48,8 @@ const RegisterPage = () => {
 
   return (
     <main className="content-width flex items-center justify-center py-10">
-      <div className="card bg-[#e2e8f0] shadow-xl px-6 py-4 max-w-96 w-full">
-        <div className="flex items-center justify-between clr-base">
-          <IoIosStar fontSize={30} />
-          <div className={`${fontTitle} text-4xl text-[color:purple] text-current bg-[#e2e8f0]  my-8 text-center`}>Register</div>
-          <IoIosStar fontSize={30} />
-        </div>
+      <div className="card bg-[#e2e8f0] shadow-xl px-5 py-10 max-w-96 w-full">
+        <h2 className="text-center text-2xl clr-base mb-5">Register</h2>
 
         <form className="flex flex-col items-center gap-5">
           <input
@@ -92,7 +88,7 @@ const RegisterPage = () => {
             value={confirmPassword}
             className="input input-bordered w-full max-w-xs text-stone-900 bg-white"
           ></input>
-          <button onClick={handleSubmit} type="submit" className="btn btn-primary text-base">
+          <button onClick={handleSubmit} type="submit" className="btn-two">
             Submit
           </button>
         </form>
