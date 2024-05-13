@@ -140,19 +140,19 @@ const SingleCalendarPage = () => {
   };
 
   return (
-    <div>
+    <main>
       {/* Show Calendar */}
       {calendarData && (
-        <div>
+        <>
           <Calendar title={calendarData.title} backgroundUrl={calendarData.backgroundUrl} hatches={calendarData.hatches} toggleHatch={toggleHatch} />
           <button className="btn-main fixed bottom-5 right-5 z-10" onClick={handleShare}>
             Share
           </button>
-        </div>
+        </>
       )}
 
       {!calendarData && <Spinner />}
-    </div>
+    </main>
   );
 };
 

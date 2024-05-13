@@ -47,61 +47,60 @@ const RegisterPage = () => {
   };
 
   return (
-    <div>
-      <div className="content-width flex items-center justify-center">
-        <div className="card bg-[#e2e8f0] shadow-xl px-6 py-4 w-96">
-          <div className="flex items-center justify-between clr-base">
-            <IoIosStar fontSize={30} />
-            <div className={`${fontTitle} text-4xl text-[color:purple] text-current bg-[#e2e8f0]  my-8 text-center`}>Register</div>
-            <IoIosStar fontSize={30} />
-          </div>
-
-          <form className="flex flex-col items-center gap-5">
-            <input
-              type="text"
-              placeholder="Name"
-              value={displayName}
-              onChange={(e) => {
-                setDisplayName(e.target.value);
-              }}
-              className="input input-bordered w-full max-w-xs text-stone-900 bg-white"
-            ></input>
-            <input
-              type="text"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              className="input input-bordered w-full max-w-xs text-stone-900 bg-white"
-            ></input>
-            <input
-              type="password"
-              placeholder="Password"
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-              value={password}
-              className="input input-bordered w-full max-w-xs text-stone-900 bg-white"
-            ></input>
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              onChange={(e) => {
-                setConfirmPassword(e.target.value);
-              }}
-              value={confirmPassword}
-              className="input input-bordered w-full max-w-xs text-stone-900 bg-white"
-            ></input>
-            <button onClick={handleSubmit} type="submit" className="btn btn-primary text-base">
-              Submit
-            </button>
-          </form>
+    <main className="content-width flex items-center justify-center py-10">
+      <div className="card bg-[#e2e8f0] shadow-xl px-6 py-4 max-w-96 w-full">
+        <div className="flex items-center justify-between clr-base">
+          <IoIosStar fontSize={30} />
+          <div className={`${fontTitle} text-4xl text-[color:purple] text-current bg-[#e2e8f0]  my-8 text-center`}>Register</div>
+          <IoIosStar fontSize={30} />
         </div>
+
+        <form className="flex flex-col items-center gap-5">
+          <input
+            type="text"
+            placeholder="Name"
+            value={displayName}
+            onChange={(e) => {
+              setDisplayName(e.target.value);
+            }}
+            className="input input-bordered w-full max-w-xs text-stone-900 bg-white"
+          ></input>
+          <input
+            type="text"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+            className="input input-bordered w-full max-w-xs text-stone-900 bg-white"
+          ></input>
+          <input
+            type="password"
+            placeholder="Password"
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
+            value={password}
+            className="input input-bordered w-full max-w-xs text-stone-900 bg-white"
+          ></input>
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            onChange={(e) => {
+              setConfirmPassword(e.target.value);
+            }}
+            value={confirmPassword}
+            className="input input-bordered w-full max-w-xs text-stone-900 bg-white"
+          ></input>
+          <button onClick={handleSubmit} type="submit" className="btn btn-primary text-base">
+            Submit
+          </button>
+        </form>
       </div>
+
       <div>{errorMessage && <div className="text-red-500">{errorMessage}</div>}</div>
       <div>{accountCreated && <div className="text-green-500">Account created successfully!</div>}</div>
-    </div>
+    </main>
   );
 };
 
