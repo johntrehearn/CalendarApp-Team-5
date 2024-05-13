@@ -103,6 +103,10 @@ button {
   border: var(--border-main);
 }
 
+.btn-narrow {
+  @apply btn-sm;
+}
+
 .btn-card {
   @apply btn btn-square;
   border: 1px solid var(--clr-base);

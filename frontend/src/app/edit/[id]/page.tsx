@@ -336,7 +336,7 @@ const EditCalendarPage = () => {
           <h2 className="text-xl mb-1">Background</h2>
           <div className="bg-slate-500 p-3 flex flex-col gap-3 rounded">
             <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900 bg-white" onChange={handleBgChange} />
-            <button className="btn btn-warning btn-outline btn-sm" onClick={handleResetBg}>
+            <button className="btn-two btn-narrow" onClick={handleResetBg}>
               Reset
             </button>
           </div>
@@ -348,11 +348,11 @@ const EditCalendarPage = () => {
           <div className="bg-slate-500 p-3 flex flex-col gap-3 rounded">
             {/* Carousel navigation */}
             <div className="flex items-center justify-between gap-1">
-              <button className="btn btn-warning btn-sm" onClick={() => handleCarouselNav('prev')}>
+              <button className="btn-main btn-narrow" onClick={() => handleCarouselNav('prev')}>
                 &larr; prev
               </button>
               <p>{currentHatch}</p>
-              <button className="btn btn-warning btn-sm" onClick={() => handleCarouselNav('next')}>
+              <button className="btn-main btn-narrow" onClick={() => handleCarouselNav('next')}>
                 next &rarr;
               </button>
             </div>
@@ -363,14 +363,14 @@ const EditCalendarPage = () => {
                   <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900 bg-white" onChange={handleHatchChange} />
                 </div>
               ))}
-              <button className="btn btn-warning btn-outline btn-sm" onClick={handleResetHatch}>
+              <button className="btn-two btn-narrow" onClick={handleResetHatch}>
                 Reset
               </button>
             </div>
             {/* Hatch toggle all button */}
             <div className="bg-slate-700 flex flex-col gap-3 text-center p-2 rounded">
               <h3>Open/Close hatches</h3>
-              <button className="btn btn-warning btn-outline btn-sm" onClick={handleToggleAll}>
+              <button className="btn-two btn-narrow" onClick={handleToggleAll}>
                 Toggle
               </button>
             </div>
@@ -388,7 +388,9 @@ const EditCalendarPage = () => {
 
       {/* Preview */}
       {/* If there's no change, show the original data */}
-      <section id="preview">{calendarData && <Calendar title={changes?.title ?? calendarData.title} backgroundUrl={changes?.backgroundUrl ?? calendarData.backgroundUrl} hatches={changes?.hatches ?? []} toggleHatch={toggleHatch} />}</section>
+      <section id="preview" className="pr-4">
+        {calendarData && <Calendar title={changes?.title ?? calendarData.title} backgroundUrl={changes?.backgroundUrl ?? calendarData.backgroundUrl} hatches={changes?.hatches ?? []} toggleHatch={toggleHatch} />}
+      </section>
 
       <ToastContainer position="bottom-left" theme="dark" />
     </main>
