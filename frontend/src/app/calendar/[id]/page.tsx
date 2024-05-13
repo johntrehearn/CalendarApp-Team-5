@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Calendar from '@/components/Calendar';
 import { useAuthContext } from '@/contexts/AuthContext';
 import Spinner from '@/components/loadingSpinner';
+import { IoShareSocial } from 'react-icons/io5';
 
 interface Hatch {
   num: number;
@@ -146,6 +147,7 @@ const SingleCalendarPage = () => {
         <>
           <Calendar title={calendarData.title} backgroundUrl={calendarData.backgroundUrl} hatches={calendarData.hatches} toggleHatch={toggleHatch} />
           <button className="btn-main fixed bottom-5 right-5 z-10" onClick={handleShare}>
+            <IoShareSocial fontSize={22} />
             Share
           </button>
         </>

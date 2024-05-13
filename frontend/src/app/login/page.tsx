@@ -35,7 +35,7 @@ const LoginPage = () => {
         <form onSubmit={handleSubmit} className="flex flex-col items-center gap-5">
           <input type="text" placeholder="Email" className="input input-bordered w-full max-w-xs text-stone-900 bg-white"></input>
           <input type="password" placeholder="Password" className="input input-bordered w-full max-w-xs text-stone-900 bg-white"></input>
-          <button type="submit" className="btn-two">
+          <button type="submit" className="btn-dark">
             Submit
           </button>
         </form>

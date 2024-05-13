@@ -103,6 +103,15 @@ button {
   border: var(--border-main);
 }
 
+.btn-dark {
+  @apply btn bg-base clr-accent font-normal text-base;
+  border: 1px solid var(--clr-base);
+}
+.btn-dark:hover {
+  @apply bg-accent clr-base;
+  border: var(--border-main);
+}
+
 .btn-narrow {
   @apply btn-sm;
 }

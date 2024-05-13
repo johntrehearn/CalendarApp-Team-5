@@ -315,11 +315,11 @@ const EditCalendarPage = () => {
     <main className="grid md:grid-cols-[300px_1fr] min-h-screen">
       {/* View navigation on small screens */}
       <div className="md:hidden flex flex-col gap-3 w-max fixed bottom-5 right-5 z-20">
-        <a href="#settings" className="btn-main btn-sm">
+        <a href="#settings" className="btn-main btn-narrow">
           <FaArrowUpLong />
           <FaEdit />
         </a>
-        <a href="#preview" className="btn-main btn-sm">
+        <a href="#preview" className="btn-main btn-narrow">
           <FaArrowDownLong />
           <FaCalendarDays />
         </a>

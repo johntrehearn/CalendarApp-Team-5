@@ -100,7 +100,7 @@ const RegisterPage = () => {
             value={confirmPassword}
             className="input input-bordered w-full max-w-xs text-stone-900 bg-white"
           ></input>
-          <button onClick={handleSubmit} type="submit" className="btn-two">
+          <button onClick={handleSubmit} type="submit" className="btn-dark">
             Submit
           </button>
         </form>
