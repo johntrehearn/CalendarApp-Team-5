@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuthContext } from '@/contexts/AuthContext';
-import { FaCalendarDays } from 'react-icons/fa6';
 import { RiMenu3Fill } from 'react-icons/ri';
 import { BiSolidCrown } from 'react-icons/bi';
 
@@ -62,7 +61,7 @@ const Header = () => {
           {/* Logo */}
           <Link href="/" className="link-btn flex items-center">
             <Image src="/logo.png" alt="logo" width={35} height={35} />
-            <span className="clr-accent pl-3">AdventiCal</span>
+            <span className="clr-accent pl-3">Advent5Cal</span>
           </Link>
         </div>
 

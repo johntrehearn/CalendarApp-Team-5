@@ -10,7 +10,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 const lato = Lato({ weight: '400', subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'T5 Calendars',
+  title: 'Advent5Cal',
   description: 'Personalized Online Advent Calendars',
 };
 
