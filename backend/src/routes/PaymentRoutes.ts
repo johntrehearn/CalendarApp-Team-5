@@ -1,5 +1,6 @@
 import express from "express";
 import stripePackage from "stripe";
+import generateTokenAndSetCookie from "../utils/generateToken";
 
 const stripe = new stripePackage(
   "sk_test_51P32IZP7WrlB8etah6fHU1BNPacwJlR8XNFQ4qBIuRlPaYjQSMRXacQZ66A30vDYRQkOh2PPqLWmZc2YRiY3PgCS00FzGWVXgz"
@@ -32,13 +33,20 @@ router.post(
     switch (event.type) {
       case "checkout.session.completed":
         const session = event.data.object;
-        const userId = session.client_reference_id; // This is now the user's UID // Manuallly insert UID to test
+        const userId = session.client_reference_id;
 
         // Update user status in Firebase Realtime Database
-        console.log(userId);
         const db = admin.database();
         const ref = db.ref(`users/${userId}`);
         await ref.update({ status: "premium" });
+
+        // Generate new token  (these lines my be deleted after hosting if they fail to work)
+        const newToken = generateTokenAndSetCookie(userId, "premium", res);
+
+        // Store new token in your database (these lines my be deleted after hosting if they fail to work)
+        const tokenRef = db.ref(`tokens/${userId}`);
+        await tokenRef.set({ jwt: newToken });
+
         console.log("User status updated to premium");
         break;
       case "payment_intent.succeeded":
