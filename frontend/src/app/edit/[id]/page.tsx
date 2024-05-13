@@ -10,6 +10,8 @@ import { useAuthContext } from '@/contexts/AuthContext';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/firebase/firebase';
 import { useRouter } from 'next/navigation';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Hatch {
   num: number;
@@ -219,6 +221,8 @@ const EditCalendarPage = () => {
   const handleSubmit = async () => {
     if (!changes || !calendarData) return;
 
+    const loadingToastId = toast.loading('Updating calendar...');
+
     // Build the data for the backend
     const calendar: CalendarForBackend = {
       title: changes.title ?? calendarData?.title,
@@ -282,8 +286,23 @@ const EditCalendarPage = () => {
 
       const responseData = await response.json();
       console.log(responseData);
+
+      toast.update(loadingToastId, {
+        render: 'Calendar updated! Redirecting to My Calendars...',
+        type: 'success',
+        isLoading: false,
+        autoClose: 2000,
+        onClose: () => router.push('/calendars'),
+      });
     } catch (error) {
       console.error('Error editing calendar:', error);
+
+      toast.update(loadingToastId, {
+        render: 'Failed to edit calendar',
+        type: 'error',
+        isLoading: false,
+        autoClose: 2000,
+      });
     }
   };
 
@@ -370,6 +389,8 @@ const EditCalendarPage = () => {
       {/* Preview */}
       {/* If there's no change, show the original data */}
       <section id="preview">{calendarData && <Calendar title={changes?.title ?? calendarData.title} backgroundUrl={changes?.backgroundUrl ?? calendarData.backgroundUrl} hatches={changes?.hatches ?? []} toggleHatch={toggleHatch} />}</section>
+
+      <ToastContainer position="bottom-left" theme="dark" />
     </main>
   );
 };

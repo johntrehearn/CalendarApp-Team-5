@@ -153,7 +153,7 @@ const CalendarsPage = () => {
 
   // Render the content of the page if the user is logged in
   return (
-    <main className="content-width flex flex-col justify-center items-center gap-10 py-10">
+    <main className="w-full px-4 flex flex-col justify-center items-center gap-10 py-10">
       {!calendarsData && <Spinner />}
 
       <div className={`${fontTitle} clr-accent text-4xl text-center bg-base`}>{displayName ? `Welcome, ${displayName}!` : 'Welcome!'}</div>
@@ -173,7 +173,7 @@ const CalendarsPage = () => {
 
       {/* Cards with New Calendar btn */}
       {calendarsData && calendarsData.length > 0 && (
-        <div className="flex flex-wrap gap-5 justify-center">
+        <div className="w-full flex flex-wrap gap-5 justify-center">
           {calendarsData.map((calendar) => (
             <CalendarCard key={calendar.id} id={calendar.id} title={calendar.title} backgroundUrl={calendar.backgroundUrl} handleAction={handleAction} />
           ))}

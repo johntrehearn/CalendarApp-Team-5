@@ -16,10 +16,10 @@ const CalendarCard: React.FC<CalendarCardProps> = ({ id, title, backgroundUrl, h
   };
 
   return (
-    <div className="card max-w-80 w-full bg-[#e2e8f0] shadow-xl p-4 grid grid-rows-[1.5fr_1fr] hover:scale-105 transition-transform">
+    <div className="card max-w-72 w-full bg-[#e2e8f0] shadow-xl p-4 grid grid-rows-[250px_auto] hover:scale-105 transition-transform">
       <figure>
         <button className="w-full h-full" onClick={() => handleClick('show')}>
-          <Image src={backgroundUrl} alt={title} width={320} height={320} className="rounded-xl object-cover object-center w-full h-full" />
+          <Image src={backgroundUrl || '/cal-bg-img.jpg'} alt={title} width={320} height={320} className="rounded-xl object-cover object-center w-full h-full" />
         </button>
       </figure>
       <div className="card-body items-center">

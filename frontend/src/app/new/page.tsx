@@ -47,7 +47,7 @@ const NewCalendarPage = () => {
   // The hatches array is initialized with 24 (hardcoded) elements for now
   // and they are open by default for easier viewing
   const [data, setData] = useState<DataType>({
-    title: '',
+    title: 'Calendar',
     backgroundFile: null,
     backgroundUrl: null,
     hatches: new Array(24).fill(null).map((_, index) => ({
@@ -61,7 +61,11 @@ const NewCalendarPage = () => {
   // SET TITLE
   // This function updates the calendar title in the state
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setData({ ...data, title: event.target.value });
+    if (event.target.value === '') {
+      setData({ ...data, title: 'Calendar' });
+    } else {
+      setData({ ...data, title: event.target.value });
+    }
   };
 
   // SET BACKGROUND
