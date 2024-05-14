@@ -1,30 +1,36 @@
 'use client';
 
-import React from 'react';
-import { useAuthContext } from '@/contexts/AuthContext';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { fontTitle } from '../utilities/font';
-import { IoIosStar } from 'react-icons/io';
-import { useState } from 'react';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const RegisterPage = () => {
-  const { login } = useAuthContext();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [accountCreated, setAccountCreated] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const loadingToastId = toast.loading('Registering...');
+
     e.preventDefault();
     if (!isRegistering) {
       if (password !== confirmPassword) {
         // Check if passwords match before sending request to backend
         setErrorMessage('Passwords do not match'); // Set error message if passwords do not match
+
+        // Show toast message with error message if passwords do not match
+        toast.update(loadingToastId, {
+          render: errorMessage || 'An error occurred. Please try again.',
+          type: 'error',
+          isLoading: false,
+          autoClose: 2000,
+        });
         return;
       }
       setIsRegistering(true);
@@ -37,23 +43,33 @@ const RegisterPage = () => {
           status: 'free',
         });
 
-        // Set accountCreated to true upon successful registration
-        setAccountCreated(true);
+        // Show toast message if registration is successful
+        toast.update(loadingToastId, {
+          render: 'Registering successful! Redirecting to Login...',
+          type: 'success',
+          isLoading: false,
+          autoClose: 2000,
+          onClose: () => router.push('/login'),
+        });
       } catch (error: any) {
         setErrorMessage(error.response.data.error);
         setIsRegistering(false);
+
+        // Show toast message with error message if registration fails
+        toast.update(loadingToastId, {
+          render: errorMessage || 'An error occurred. Please try again.',
+          type: 'error',
+          isLoading: false,
+          autoClose: 2000,
+        });
       }
     }
   };
 
   return (
     <main className="content-width flex items-center justify-center py-10">
-      <div className="card bg-[#e2e8f0] shadow-xl px-6 py-4 max-w-96 w-full">
-        <div className="flex items-center justify-between clr-base">
-          <IoIosStar fontSize={30} />
-          <div className={`${fontTitle} text-4xl text-[color:purple] text-current bg-[#e2e8f0]  my-8 text-center`}>Register</div>
-          <IoIosStar fontSize={30} />
-        </div>
+      <div className="card bg-[#e2e8f0] shadow-xl px-5 py-10 max-w-96 w-full">
+        <h2 className="text-center text-2xl clr-base mb-5">Register</h2>
 
         <form className="flex flex-col items-center gap-5">
           <input
@@ -92,14 +108,13 @@ const RegisterPage = () => {
             value={confirmPassword}
             className="input input-bordered w-full max-w-xs text-stone-900 bg-white"
           ></input>
-          <button onClick={handleSubmit} type="submit" className="btn btn-primary text-base">
+          <button onClick={handleSubmit} type="submit" className="btn-dark">
             Submit
           </button>
         </form>
       </div>
 
-      <div>{errorMessage && <div className="text-red-500">{errorMessage}</div>}</div>
-      <div>{accountCreated && <div className="text-green-500">Account created successfully!</div>}</div>
+      <ToastContainer position="bottom-left" theme="dark" />
     </main>
   );
 };

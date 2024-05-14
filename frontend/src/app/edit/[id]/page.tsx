@@ -10,6 +10,8 @@ import { useAuthContext } from '@/contexts/AuthContext';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/firebase/firebase';
 import { useRouter } from 'next/navigation';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Hatch {
   num: number;
@@ -219,6 +221,8 @@ const EditCalendarPage = () => {
   const handleSubmit = async () => {
     if (!changes || !calendarData) return;
 
+    const loadingToastId = toast.loading('Updating calendar...');
+
     // Build the data for the backend
     const calendar: CalendarForBackend = {
       title: changes.title ?? calendarData?.title,
@@ -282,8 +286,23 @@ const EditCalendarPage = () => {
 
       const responseData = await response.json();
       console.log(responseData);
+
+      toast.update(loadingToastId, {
+        render: 'Calendar updated! Redirecting to My Calendars...',
+        type: 'success',
+        isLoading: false,
+        autoClose: 2000,
+        onClose: () => router.push('/calendars'),
+      });
     } catch (error) {
       console.error('Error editing calendar:', error);
+
+      toast.update(loadingToastId, {
+        render: 'Failed to edit calendar',
+        type: 'error',
+        isLoading: false,
+        autoClose: 2000,
+      });
     }
   };
 
@@ -296,11 +315,11 @@ const EditCalendarPage = () => {
     <main className="grid md:grid-cols-[300px_1fr] min-h-screen">
       {/* View navigation on small screens */}
       <div className="md:hidden flex flex-col gap-3 w-max fixed bottom-5 right-5 z-20">
-        <a href="#settings" className="btn btn-sm btn-accent text-lg">
+        <a href="#settings" className="btn-main btn-narrow">
           <FaArrowUpLong />
           <FaEdit />
         </a>
-        <a href="#preview" className="btn btn-sm btn-accent text-lg">
+        <a href="#preview" className="btn-main btn-narrow">
           <FaArrowDownLong />
           <FaCalendarDays />
         </a>
@@ -309,31 +328,31 @@ const EditCalendarPage = () => {
       <section id="settings" className="flex flex-col gap-12 max-w-[300px] mx-auto py-8 px-4 bg-base text-white">
         {/* Title */}
         <div>
-          <h2 className="text-3xl">Title</h2>
+          <h2 className="text-xl mb-1">Title</h2>
           <input type="text" placeholder="Enter calendar title" className="input input-bordered w-full max-w-xs text-stone-900 bg-white" onChange={handleTitleChange} />
         </div>
         {/* Background */}
         <div>
-          <h2 className="text-3xl">Background</h2>
+          <h2 className="text-xl mb-1">Background</h2>
           <div className="bg-slate-500 p-3 flex flex-col gap-3 rounded">
             <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900 bg-white" onChange={handleBgChange} />
-            <button className="btn btn-warning btn-outline btn-sm" onClick={handleResetBg}>
+            <button className="btn-two btn-narrow" onClick={handleResetBg}>
               Reset
             </button>
           </div>
         </div>
         {/* Hatches */}
         <div>
-          <h2 className="text-3xl">Hatches</h2>
+          <h2 className="text-xl mb-1">Hatches</h2>
           {/* Carousel */}
           <div className="bg-slate-500 p-3 flex flex-col gap-3 rounded">
             {/* Carousel navigation */}
             <div className="flex items-center justify-between gap-1">
-              <button className="btn btn-warning btn-sm" onClick={() => handleCarouselNav('prev')}>
+              <button className="btn-main btn-narrow" onClick={() => handleCarouselNav('prev')}>
                 &larr; prev
               </button>
               <p>{currentHatch}</p>
-              <button className="btn btn-warning btn-sm" onClick={() => handleCarouselNav('next')}>
+              <button className="btn-main btn-narrow" onClick={() => handleCarouselNav('next')}>
                 next &rarr;
               </button>
             </div>
@@ -344,32 +363,36 @@ const EditCalendarPage = () => {
                   <input type="file" className="file-input file-input-bordered w-full max-w-xs text-stone-900 bg-white" onChange={handleHatchChange} />
                 </div>
               ))}
-              <button className="btn btn-warning btn-outline btn-sm" onClick={handleResetHatch}>
+              <button className="btn-two btn-narrow" onClick={handleResetHatch}>
                 Reset
               </button>
             </div>
             {/* Hatch toggle all button */}
             <div className="bg-slate-700 flex flex-col gap-3 text-center p-2 rounded">
               <h3>Open/Close hatches</h3>
-              <button className="btn btn-warning btn-outline btn-sm" onClick={handleToggleAll}>
+              <button className="btn-two btn-narrow" onClick={handleToggleAll}>
                 Toggle
               </button>
             </div>
           </div>
         </div>
         {/* Submit */}
-        <button className="btn btn-primary text-base" onClick={handleSubmit}>
+        <button className="btn-main" onClick={handleSubmit}>
           Submit
         </button>
         {/* Cancel */}
-        <Link className="btn btn-outline text-white text-base" href="/calendars">
+        <Link className="btn-two" href="/calendars">
           Cancel
         </Link>
       </section>
 
       {/* Preview */}
       {/* If there's no change, show the original data */}
-      <section id="preview">{calendarData && <Calendar title={changes?.title ?? calendarData.title} backgroundUrl={changes?.backgroundUrl ?? calendarData.backgroundUrl} hatches={changes?.hatches ?? []} toggleHatch={toggleHatch} />}</section>
+      <section id="preview" className="pr-4">
+        {calendarData && <Calendar title={changes?.title ?? calendarData.title} backgroundUrl={changes?.backgroundUrl ?? calendarData.backgroundUrl} hatches={changes?.hatches ?? []} toggleHatch={toggleHatch} />}
+      </section>
+
+      <ToastContainer position="bottom-left" theme="dark" />
     </main>
   );
 };
