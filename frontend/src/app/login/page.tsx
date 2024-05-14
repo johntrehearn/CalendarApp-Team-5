@@ -1,15 +1,21 @@
 "use client";
 
-import React from "react";
-import { useAuthContext } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
-import { doSignInWithEmailAndPassword } from "@/firebase/auth";
+
+import React from 'react';
+import { useAuthContext } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
+import { doSignInWithEmailAndPassword } from '@/firebase/auth';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const LoginPage = () => {
   const { login } = useAuthContext();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const loadingToastId = toast.loading('Signing in...');
+
     e.preventDefault();
 
     // Get the email and password from the input fields
@@ -20,15 +26,37 @@ const LoginPage = () => {
       document.querySelector('input[type="password"]') as HTMLInputElement
     ).value;
 
-    // Sign in the user with Firebase and get the ID token
-    const userCredential = await doSignInWithEmailAndPassword(email, password);
-    const idToken = await userCredential.user.getIdToken();
+    try {
+      // Sign in the user with Firebase and get the ID token
+      const userCredential = await doSignInWithEmailAndPassword(email, password);
+      const idToken = await userCredential.user.getIdToken();
 
-    // Call the login function with the ID token and wait for it to complete
-    await login(idToken);
+      // Call the login function with the ID token and wait for it to complete
+      await login(idToken);
+
+      // Show toast message if sign in is successful
+      toast.update(loadingToastId, {
+        render: 'You are signed in! Redirecting to My Calendars...',
+        type: 'success',
+        isLoading: false,
+        autoClose: 2000,
+        onClose: () => router.push('/calendars'),
+      });
+    } catch (error) {
+      console.error('Error during sign in:', error);
+
 
     // Redirect the user to the home page
     router.replace("/calendars");
+      
+      // Show toast message with error message if registration fails
+      toast.update(loadingToastId, {
+        render: 'An error occurred. Please try again.',
+        type: 'error',
+        isLoading: false,
+        autoClose: 2000,
+      });
+    }
   };
 
   return (
@@ -55,6 +83,8 @@ const LoginPage = () => {
           </button>
         </form>
       </div>
+
+      <ToastContainer position="bottom-left" theme="dark" />
     </main>
   );
 };
