@@ -1,13 +1,14 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import Image from "next/image";
-import { useAuthContext } from "@/contexts/AuthContext";
-import { RiMenu3Fill } from "react-icons/ri";
-import { BiSolidCrown } from "react-icons/bi";
-import { loadStripe } from "@stripe/stripe-js";
-import { getDatabase, ref, onValue } from "firebase/database";
-import { useEffect, useState } from "react";
+import Link from 'next/link';
+import Image from 'next/image';
+import { useAuthContext } from '@/contexts/AuthContext';
+import { RiMenu3Fill } from 'react-icons/ri';
+import { BiSolidCrown } from 'react-icons/bi';
+import { loadStripe } from '@stripe/stripe-js';
+import { getDatabase, ref, onValue } from 'firebase/database';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 type MenuItemsProps = {
   onUpgrade: () => void;
@@ -16,6 +17,7 @@ type MenuItemsProps = {
 const MenuItems: React.FC<MenuItemsProps> = ({ onUpgrade }) => {
   const { isLoggedIn, logout, uid } = useAuthContext();
   const [status, setStatus] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (!uid) {
@@ -35,6 +37,7 @@ const MenuItems: React.FC<MenuItemsProps> = ({ onUpgrade }) => {
   // Call the logout function when the logout button is clicked
   const handleLogout = () => {
     logout();
+    router.replace('/');
   };
 
   if (isLoggedIn) {
@@ -49,7 +52,7 @@ const MenuItems: React.FC<MenuItemsProps> = ({ onUpgrade }) => {
           New Calendar
         </Link>
 
-        {status !== "premium" && (
+        {status !== 'premium' && (
           <button onClick={onUpgrade} className="btn-main">
             <BiSolidCrown />
             Upgrade
@@ -81,9 +84,7 @@ const Header = () => {
   const { uid } = useAuthContext();
 
   // Load Stripe for the upgrade button functionality (onUpgrade)
-  const stripePromise = loadStripe(
-    "pk_test_51P32IZP7WrlB8etaPVNy6JDje09m3bPMwZSGP8hshpC1yeJb3gdjvERDXogAzMCV7drtpA5RZjtrTTxRwS7W4Jup000Az51PZy"
-  );
+  const stripePromise = loadStripe('pk_test_51P32IZP7WrlB8etaPVNy6JDje09m3bPMwZSGP8hshpC1yeJb3gdjvERDXogAzMCV7drtpA5RZjtrTTxRwS7W4Jup000Az51PZy');
 
   const onUpgrade = async () => {
     // Wait for Stripe to initialize
@@ -91,24 +92,21 @@ const Header = () => {
 
     if (!stripe) {
       // Check if Stripe failed to initialize
-      console.error("Stripe failed to initialize");
+      console.error('Stripe failed to initialize');
       return;
     }
 
     try {
-      const response = await fetch(
-        "http://localhost:8080/auth/create-checkout-session",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: uid, // Pass the user ID to the backend to create a session for the user in the database. MUST BE PASSED!!!
-            priceId: "price_1P32UrP7WrlB8etaGthoWBTY",
-          }),
-        }
-      );
+      const response = await fetch('http://localhost:8080/auth/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: uid, // Pass the user ID to the backend to create a session for the user in the database. MUST BE PASSED!!!
+          priceId: 'price_1P32UrP7WrlB8etaGthoWBTY',
+        }),
+      });
       const session = await response.json();
       const result = await stripe.redirectToCheckout({ sessionId: session.id });
 
@@ -116,7 +114,7 @@ const Header = () => {
         console.error(result.error.message);
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
     }
   };
   return (
@@ -145,10 +143,7 @@ const Header = () => {
               <RiMenu3Fill />
             </button>
             {/* Menu items */}
-            <div
-              tabIndex={0}
-              className="right-0 top-14 menu menu-sm dropdown-content z-[1] bg-base rounded-box w-52 flex flex-col items-stretch text-center gap-5 p-5 border-2 border-white"
-            >
+            <div tabIndex={0} className="right-0 top-14 menu menu-sm dropdown-content z-[1] bg-base rounded-box w-52 flex flex-col items-stretch text-center gap-5 p-5 border-2 border-white">
               <MenuItems onUpgrade={onUpgrade} />
             </div>
           </div>
