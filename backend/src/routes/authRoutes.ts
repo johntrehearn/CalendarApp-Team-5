@@ -308,7 +308,7 @@ router.post("/create-checkout-session", async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: "http://localhost:3000/success",
+      success_url: "http://localhost:3000/calendars",
       cancel_url: "https://example.com/cancel",
       client_reference_id: userId,
     });
