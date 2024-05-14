@@ -23,6 +23,14 @@ const RegisterPage = () => {
       if (password !== confirmPassword) {
         // Check if passwords match before sending request to backend
         setErrorMessage('Passwords do not match'); // Set error message if passwords do not match
+
+        // Show toast message with error message if passwords do not match
+        toast.update(loadingToastId, {
+          render: errorMessage || 'An error occurred. Please try again.',
+          type: 'error',
+          isLoading: false,
+          autoClose: 2000,
+        });
         return;
       }
       setIsRegistering(true);
@@ -35,7 +43,7 @@ const RegisterPage = () => {
           status: 'free',
         });
 
-        // Show success toast and redirect to login page
+        // Show toast message if registration is successful
         toast.update(loadingToastId, {
           render: 'Registering successful! Redirecting to Login...',
           type: 'success',
@@ -47,7 +55,7 @@ const RegisterPage = () => {
         setErrorMessage(error.response.data.error);
         setIsRegistering(false);
 
-        // Show error toast if registration fails
+        // Show toast message with error message if registration fails
         toast.update(loadingToastId, {
           render: errorMessage || 'An error occurred. Please try again.',
           type: 'error',
