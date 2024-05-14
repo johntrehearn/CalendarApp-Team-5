@@ -8,6 +8,9 @@ import {
   useCallback,
   ReactNode,
 } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { useEffect } from "react";
+import { auth } from "@/firebase/firebase";
 
 // Interface for the AuthContext
 interface AuthContextType {
@@ -31,6 +34,26 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [uid, setUid] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Check if the user is logged in when the component mounts and set the state accordingly
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoading(true);
+      if (user) {
+        // User is signed in
+        setIsLoggedIn(true);
+        setUid(user.uid);
+      } else {
+        // User is signed out
+        setIsLoggedIn(false);
+        setUid(null);
+      }
+      setIsLoading(false);
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
 
   const login = useCallback(async (idToken: string) => {
     setIsLoading(true);
