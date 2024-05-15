@@ -388,7 +388,7 @@ const EditCalendarPage = () => {
 
       {/* Preview */}
       {/* If there's no change, show the original data */}
-      <section id="preview" className="pr-4">
+      <section id="preview" className="md:pr-4">
         {calendarData && <Calendar title={changes?.title ?? calendarData.title} backgroundUrl={changes?.backgroundUrl ?? calendarData.backgroundUrl} hatches={changes?.hatches ?? []} toggleHatch={toggleHatch} />}
       </section>
 
