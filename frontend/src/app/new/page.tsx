@@ -337,7 +337,7 @@ const NewCalendarPage = () => {
       </section>
 
       {/* Preview */}
-      <section id="preview" className="pr-4">
+      <section id="preview" className="md:pr-4">
         <Calendar title={data.title} backgroundUrl={data.backgroundUrl} hatches={data.hatches} toggleHatch={toggleHatch} />
       </section>
 
