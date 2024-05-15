@@ -7,6 +7,8 @@ import Spinner from '@/components/loadingSpinner';
 import { IoShareSocial } from 'react-icons/io5';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { fontTitle } from '@/app/utilities/font';
+import { LuAngry } from 'react-icons/lu';
 
 interface Hatch {
   num: number;
@@ -77,6 +79,13 @@ const SingleCalendarPage = () => {
     fetchData();
   }, [uid]);
 
+  const openAlertModal = () => {
+    const modal = document.getElementById('alert_modal') as HTMLDialogElement;
+    if (modal) {
+      modal.showModal();
+    }
+  };
+
   const toggleHatch = async (hatchNum: number) => {
     if (!calendarData) return;
 
@@ -94,7 +103,7 @@ const SingleCalendarPage = () => {
     }
 
     if (!canOpenHatch) {
-      alert("You can't open this hatch yet!");
+      openAlertModal();
       return;
     }
 
@@ -181,6 +190,21 @@ const SingleCalendarPage = () => {
       )}
 
       {!calendarData && <Spinner />}
+
+      {/* Modal for opening hatches too early */}
+      <dialog id="alert_modal" className="modal">
+        <div className="modal-box">
+          <h3 className={`${fontTitle} font-bold text-2xl flex items-center gap-2`}>
+            <LuAngry /> Santa says: You are naughty!
+          </h3>
+          <p className="py-4">Please be patient. It&apos;s too early to open this hatch.</p>
+          <div className="modal-action">
+            <form method="dialog" className="flex gap-5">
+              <button className="btn-dark">I&apos;ll wait</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
 
       <ToastContainer position="bottom-left" theme="dark" />
     </main>
