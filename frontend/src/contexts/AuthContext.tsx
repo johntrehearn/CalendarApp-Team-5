@@ -10,6 +10,7 @@ import {
 } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "react";
+import { setPersistence, browserSessionPersistence } from "firebase/auth";
 import { auth } from "@/firebase/firebase";
 
 // Interface for the AuthContext
@@ -36,23 +37,31 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Check if the user is logged in when the component mounts and set the state accordingly
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsLoading(true);
-      if (user) {
-        // User is signed in
-        setIsLoggedIn(true);
-        setUid(user.uid);
-      } else {
-        // User is signed out
-        setIsLoggedIn(false);
-        setUid(null);
-      }
-      setIsLoading(false);
-    });
+    setPersistence(auth, browserSessionPersistence)
+      .then(() => {
+        // Check if the user is logged in when the component mounts and set the state accordingly
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          setIsLoading(true);
+          if (user) {
+            // User is signed in
+            setIsLoggedIn(true);
+            setUid(user.uid);
+          } else {
+            // User is signed out
+            setIsLoggedIn(false);
+            setUid(null);
+          }
+          setIsLoading(false);
+        });
 
-    // Cleanup subscription on unmount
-    return () => unsubscribe();
+        // Cleanup subscription on unmount
+        return () => unsubscribe();
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        let errorCode = error.code;
+        let errorMessage = error.message;
+      });
   }, []);
 
   const login = useCallback(async (idToken: string) => {

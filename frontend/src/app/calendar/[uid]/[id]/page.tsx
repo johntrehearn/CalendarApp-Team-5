@@ -5,8 +5,8 @@ import Calendar from '@/components/Calendar';
 import { useAuthContext } from '@/contexts/AuthContext';
 import Spinner from '@/components/loadingSpinner';
 import { IoShareSocial } from 'react-icons/io5';
-import { fontTitle } from '@/app/utilities/font';
-import { LuAngry } from 'react-icons/lu';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Hatch {
   num: number;
@@ -30,6 +30,7 @@ const SingleCalendarPage = () => {
     // Get the last part of the URL path, which should be the calendar ID
 
     const urlParts = window.location.pathname.split('/');
+    const uid = urlParts[urlParts.length - 2];
     const calendarId = urlParts[urlParts.length - 1];
 
     try {
@@ -53,12 +54,12 @@ const SingleCalendarPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const urlParts = window.location.pathname.split('/');
+      const uid = urlParts[urlParts.length - 2];
+      const calendarId = urlParts[urlParts.length - 1];
+
       console.log(uid);
       if (!uid) return;
-
-      // Get the last part of the URL path, which should be the calendar ID
-      const urlParts = window.location.pathname.split('/');
-      const calendarId = urlParts[urlParts.length - 1];
 
       try {
         const response = await fetch(`http://localhost:8080/calendar/getcalendar/${uid}/${calendarId}`);
@@ -75,13 +76,6 @@ const SingleCalendarPage = () => {
 
     fetchData();
   }, [uid]);
-
-  const openAlertModal = () => {
-    const modal = document.getElementById('alert_modal') as HTMLDialogElement;
-    if (modal) {
-      modal.showModal();
-    }
-  };
 
   const toggleHatch = async (hatchNum: number) => {
     if (!calendarData) return;
@@ -100,7 +94,7 @@ const SingleCalendarPage = () => {
     }
 
     if (!canOpenHatch) {
-      openAlertModal();
+      alert("You can't open this hatch yet!");
       return;
     }
 
@@ -117,8 +111,8 @@ const SingleCalendarPage = () => {
     };
     setCalendarData(updatedCalendarData);
 
-    // Get the last part of the URL path, which should be the calendar ID
     const urlParts = window.location.pathname.split('/');
+    const uid = urlParts[urlParts.length - 2];
     const calendarId = urlParts[urlParts.length - 1];
 
     // Update the specific hatch status on the server
@@ -146,7 +140,31 @@ const SingleCalendarPage = () => {
   };
 
   const handleShare = () => {
-    console.log('Share button clicked');
+    const loadingToastId = toast.loading('Copying link...');
+
+    const url = window.location.href;
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        console.log('URL copied to clipboard successfully!');
+        // Show toast message if copying is successful
+        toast.update(loadingToastId, {
+          render: 'URL copied to clipboard successfully!',
+          type: 'success',
+          isLoading: false,
+          autoClose: 2000,
+        });
+      })
+      .catch((err) => {
+        console.error('Could not copy text: ', err);
+        // Show toast message with error message if copying fails
+        toast.update(loadingToastId, {
+          render: 'Could not copy text.',
+          type: 'error',
+          isLoading: false,
+          autoClose: 2000,
+        });
+      });
   };
 
   return (
@@ -164,20 +182,7 @@ const SingleCalendarPage = () => {
 
       {!calendarData && <Spinner />}
 
-      {/* Modal for opening hatches too early */}
-      <dialog id="alert_modal" className="modal">
-        <div className="modal-box">
-          <h3 className={`${fontTitle} font-bold text-2xl flex items-center gap-2`}>
-            <LuAngry /> Santa says: You are naughty!
-          </h3>
-          <p className="py-4">Please be patient. It&apos;s too early to open this hatch.</p>
-          <div className="modal-action">
-            <form method="dialog" className="flex gap-5">
-              <button className="btn-dark">I&apos;ll wait</button>
-            </form>
-          </div>
-        </div>
-      </dialog>
+      <ToastContainer position="bottom-left" theme="dark" />
     </main>
   );
 };
