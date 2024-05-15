@@ -107,7 +107,7 @@ const CalendarsPage = () => {
 
     // Navigate to the single calendar page and sending the cal id
     if (action === "show") {
-      router.push(`/calendar/${id}`);
+      router.push(`/calendar/${uid}/${id}`);
     }
 
     // Open the delete modal for more actions
@@ -121,8 +121,17 @@ const CalendarsPage = () => {
     }
 
     // For now, just log which calendar is being shared
+    // Copy the URL of the calendar to the clipboard
     if (action === "share") {
-      console.log(`Sharing calendar with id: ${id}`);
+      const url = `${window.location.origin}/calendar/${uid}/${id}`;
+      navigator.clipboard
+        .writeText(url)
+        .then(() => {
+          console.log("URL copied to clipboard successfully!");
+        })
+        .catch((err) => {
+          console.error("Could not copy text: ", err);
+        });
     }
   };
 
