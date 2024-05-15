@@ -40,13 +40,6 @@ router.post(
         const ref = db.ref(`users/${userId}`);
         await ref.update({ status: "premium" });
 
-        // Generate new token  (these lines my be deleted after hosting if they fail to work)
-        const newToken = generateTokenAndSetCookie(userId, "premium", res);
-
-        // Store new token in your database (these lines my be deleted after hosting if they fail to work)
-        const tokenRef = db.ref(`tokens/${userId}`);
-        await tokenRef.set({ jwt: newToken });
-
         console.log("User status updated to premium");
         break;
       case "payment_intent.succeeded":

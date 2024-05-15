@@ -134,9 +134,6 @@ router.post(
       const decodedToken = await admin.auth().verifyIdToken(idToken);
       const uid = decodedToken.uid;
 
-      // Set the user ID in the session
-      //req.session.userId = uid;
-
       // Retrieve user status from the database
       const userStatusSnapshot = await admin
         .database()
@@ -308,8 +305,8 @@ router.post("/create-checkout-session", async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: "http://localhost:3000/calendars",
-      cancel_url: "https://example.com/cancel",
+      success_url: "http://localhost:3000/payment-success",
+      cancel_url: "http://localhost:3000/payment-fail",
       client_reference_id: userId,
     });
 
@@ -318,6 +315,23 @@ router.post("/create-checkout-session", async (req, res) => {
     console.error("Error creating checkout session:", error);
     res.status(500).json({ error: "Failed to create checkout session" });
   }
+});
+
+// Function for getting user data from Firebase Auth and Realtime Database
+const getUserFromDatabase = async (userId: string) => {
+  const userSnapshot = await admin
+    .database()
+    .ref("users/" + userId)
+    .once("value");
+  return userSnapshot.val();
+};
+
+// Route for refreshing the JWT token and setting a new cookie with the new JWT
+router.post("/refresh-token", async (req, res) => {
+  const { userId } = req.body;
+  const user = await getUserFromDatabase(userId);
+  const newJwt = generateTokenAndSetCookie(userId, user.status, res);
+  res.json({ success: true, jwt: newJwt });
 });
 
 export default router;

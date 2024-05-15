@@ -1,4 +1,5 @@
-'use client';
+"use client";
+
 
 import React from 'react';
 import { useAuthContext } from '@/contexts/AuthContext';
@@ -6,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { doSignInWithEmailAndPassword } from '@/firebase/auth';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 
 const LoginPage = () => {
   const { login } = useAuthContext();
@@ -17,8 +19,12 @@ const LoginPage = () => {
     e.preventDefault();
 
     // Get the email and password from the input fields
-    const email = (document.querySelector('input[type="text"]') as HTMLInputElement).value;
-    const password = (document.querySelector('input[type="password"]') as HTMLInputElement).value;
+    const email = (
+      document.querySelector('input[type="text"]') as HTMLInputElement
+    ).value;
+    const password = (
+      document.querySelector('input[type="password"]') as HTMLInputElement
+    ).value;
 
     try {
       // Sign in the user with Firebase and get the ID token
@@ -39,6 +45,10 @@ const LoginPage = () => {
     } catch (error) {
       console.error('Error during sign in:', error);
 
+
+    // Redirect the user to the home page
+    router.replace("/calendars");
+      
       // Show toast message with error message if registration fails
       toast.update(loadingToastId, {
         render: 'An error occurred. Please try again.',
@@ -54,9 +64,20 @@ const LoginPage = () => {
       <div className="card bg-[#e2e8f0] shadow-xl px-5 py-10 max-w-96 w-full">
         <h2 className="text-center text-2xl clr-base mb-5">Log In</h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col items-center gap-5">
-          <input type="text" placeholder="Email" className="input input-bordered w-full max-w-xs text-stone-900 bg-white"></input>
-          <input type="password" placeholder="Password" className="input input-bordered w-full max-w-xs text-stone-900 bg-white"></input>
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col items-center gap-5"
+        >
+          <input
+            type="text"
+            placeholder="Email"
+            className="input input-bordered w-full max-w-xs text-stone-900 bg-white"
+          ></input>
+          <input
+            type="password"
+            placeholder="Password"
+            className="input input-bordered w-full max-w-xs text-stone-900 bg-white"
+          ></input>
           <button type="submit" className="btn-dark">
             Submit
           </button>
