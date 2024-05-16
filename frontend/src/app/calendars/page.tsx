@@ -64,31 +64,30 @@ const CalendarsPage = () => {
     });
   }, [uid]);
 
-  // Fetch calendars
-  const fetchCalendars = async () => {
-    if (!uid) return;
-
-    try {
-      const response = await fetch(`http://localhost:8080/calendar/getcalendars/${uid}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch calendars');
-      }
-      const data = await response.json();
-      // If no calendars are fetched, return an empty array
-      if (!data) {
-        return [];
-      }
-      const calendarsArray = Object.entries(data).map(([id, calendarData]) => ({
-        id,
-        ...(calendarData as CalendarData),
-      }));
-      return calendarsArray;
-    } catch (error) {
-      console.error('Error fetching calendars:', error);
-    }
-  };
-
   useEffect(() => {
+    // Fetch calendars
+    const fetchCalendars = async () => {
+      if (!uid) return;
+
+      try {
+        const response = await fetch(`http://localhost:8080/calendar/getcalendars/${uid}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch calendars');
+        }
+        const data = await response.json();
+        // If no calendars are fetched, return an empty array
+        if (!data) {
+          return [];
+        }
+        const calendarsArray = Object.entries(data).map(([id, calendarData]) => ({
+          id,
+          ...(calendarData as CalendarData),
+        }));
+        return calendarsArray;
+      } catch (error) {
+        console.error('Error fetching calendars:', error);
+      }
+    };
     fetchCalendars().then((data) => setCalendarsData(data || null));
   }, [uid]);
 
@@ -192,11 +191,11 @@ const CalendarsPage = () => {
 
       {/* Info when there's no calendar to show */}
       {calendarsData?.length === 0 && (
-        <div role="alert" className="alert mx-auto">
-          <BsInfoCircle className="text-primary text-xl" />
+        <div role="alert" className="alert mx-auto max-w-[600px]">
+          <BsInfoCircle className="clr-base text-xl" />
           <span>You don&apos;t have any calendars yet.</span>
           <div>
-            <Link href="/new" className="btn btn-sm btn-primary">
+            <Link href="/new" className="btn-two btn-narrow">
               Create
             </Link>
           </div>

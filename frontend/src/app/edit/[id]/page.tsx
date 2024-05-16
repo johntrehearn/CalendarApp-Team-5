@@ -111,7 +111,7 @@ const EditCalendarPage = () => {
     };
 
     fetchData();
-  }, []);
+  }, [uid]);
 
   // SET TITLE
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

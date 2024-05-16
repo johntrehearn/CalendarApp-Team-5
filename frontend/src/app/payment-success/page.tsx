@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import Link from "next/link";
-import { BsInfoCircle } from "react-icons/bs";
-import { parseCookies } from "nookies";
-import { jwtDecode } from "jwt-decode";
-import { JwtPayload } from "jwt-decode";
-import axios from "axios";
+import React, { useEffect } from 'react';
+import Link from 'next/link';
+import { BsInfoCircle } from 'react-icons/bs';
+import { parseCookies } from 'nookies';
+import { jwtDecode } from 'jwt-decode';
+import { JwtPayload } from 'jwt-decode';
+import axios from 'axios';
 
 interface MyTokenPayload extends JwtPayload {
   userId: string;
@@ -14,26 +14,23 @@ interface MyTokenPayload extends JwtPayload {
 
 const PaymentSuccessPage = () => {
   useEffect(() => {
-    console.log("useEffect called");
+    console.log('useEffect called');
     const refreshJWT = async () => {
       const cookies = parseCookies();
-      console.log("Cookies:", cookies);
-      if (cookies.jwt && typeof cookies.jwt === "string") {
-        console.log(
-          "JWT condition:",
-          cookies.jwt && typeof cookies.jwt === "string"
-        );
+      console.log('Cookies:', cookies);
+      if (cookies.jwt && typeof cookies.jwt === 'string') {
+        console.log('JWT condition:', cookies.jwt && typeof cookies.jwt === 'string');
         const decodedToken = jwtDecode<MyTokenPayload>(cookies.jwt);
         const userId = decodedToken.userId;
 
-        console.log("Making axios request");
+        console.log('Making axios request');
         try {
           const response = await axios.post(
-            "http://localhost:8080/auth/refresh-token",
+            'http://localhost:8080/auth/refresh-token',
             { userId },
             {
               headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
               },
               withCredentials: true, // Include credentials here
             }
@@ -44,7 +41,7 @@ const PaymentSuccessPage = () => {
           document.cookie = `jwt=${data.jwt}; path=/`;
           // The new JWT is now set as a cookie
         } catch (error) {
-          console.error("Error during axios request:", error);
+          console.error('Error during axios request:', error);
         }
       }
     };
@@ -59,7 +56,7 @@ const PaymentSuccessPage = () => {
         <BsInfoCircle className="clr-base text-3xl" />
         <span>Payment successful!</span>
         <div>
-          <Link href="/calendars" className="btn-two">
+          <Link href="/calendars" className="btn-two btn-narrow">
             Back to Home
           </Link>
         </div>

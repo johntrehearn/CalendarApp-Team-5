@@ -9,7 +9,7 @@ const PaymentFailPage = () => {
         <IoAlertCircleOutline className="clr-base text-4xl" />
         <span>Payment failed. Check your data and try again later!</span>
         <div>
-          <Link href="/" className="btn-two">
+          <Link href="/" className="btn-two btn-narrow">
             Back to Home
           </Link>
         </div>
