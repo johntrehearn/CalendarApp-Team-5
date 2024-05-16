@@ -1,17 +1,8 @@
-"use client";
+'use client';
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useMemo,
-  useCallback,
-  ReactNode,
-} from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { useEffect } from "react";
-import { setPersistence, browserSessionPersistence } from "firebase/auth";
-import { auth } from "@/firebase/firebase";
+import { createContext, useContext, useState, useMemo, useCallback, ReactNode, useEffect } from 'react';
+import { onAuthStateChanged, setPersistence, browserSessionPersistence } from 'firebase/auth';
+import { auth } from '@/firebase/firebase';
 
 // Interface for the AuthContext
 interface AuthContextType {
@@ -67,13 +58,13 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = useCallback(async (idToken: string) => {
     setIsLoading(true);
     // Send a POST request to the backend with the ID token
-    const response = await fetch("http://localhost:8080/auth/login", {
-      method: "POST",
+    const response = await fetch('http://localhost:8080/auth/login', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ idToken }),
-      credentials: "include", // Include cookies
+      credentials: 'include', // Include cookies
     });
 
     if (response.ok) {
@@ -83,11 +74,11 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Assuming the response includes the uid
       const data = await response.json();
       setUid(data.user.uid);
-      console.log("Logged in as:", data.user.uid);
+      console.log('Logged in as:', data.user.uid);
     } else {
       // If the login failed, show an error message
       const data = await response.json();
-      console.error("Failed to log in:", data.error);
+      console.error('Failed to log in:', data.error);
     }
     setIsLoading(false);
   }, []);
@@ -95,12 +86,12 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = useCallback(async () => {
     setIsLoading(true);
     // Send a POST request to the backend to log out
-    const response = await fetch("http://localhost:8080/auth/logout", {
-      method: "POST",
+    const response = await fetch('http://localhost:8080/auth/logout', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
-      credentials: "include", // Include cookies
+      credentials: 'include', // Include cookies
     });
 
     if (response.ok) {
@@ -110,7 +101,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } else {
       // If the logout failed, show an error message
       const data = await response.json();
-      console.error("Failed to log out:", data.error);
+      console.error('Failed to log out:', data.error);
     }
     setIsLoading(false);
   }, []);
@@ -124,21 +115,17 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       logout,
       isLoading,
     };
-  }, [isLoggedIn, login, logout, isLoading]);
+  }, [isLoggedIn, login, logout, isLoading, uid]);
 
   // Provide the context value to its children
-  return (
-    <AuthContext.Provider value={authContextValue}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={authContextValue}>{children}</AuthContext.Provider>;
 };
 
 // Custom Hook to use AuthContext
 const useAuthContext = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuthContext must be used within an AuthProvider");
+    throw new Error('useAuthContext must be used within an AuthProvider');
   }
   return context;
 };
